@@ -1,4 +1,4 @@
-# Dockerfile
+# Use the official Node.js image
 FROM node:14
 
 # Set the working directory
@@ -16,8 +16,5 @@ COPY . .
 # Expose the port your server runs on
 EXPOSE 5050
 
-# Build the React app (if you are serving it from here)
-RUN npm run build
-
 # Start the server
-CMD ["npm", "app"]
+CMD ["npm", "start"]

@@ -1,2 +1,0 @@
-ATLAS_BD="mongodb+srv://<bd>:<password>@cluster1.dydb2rf.mongodb.net/?retryWrites=true&w=majority"
-PORT='5050'

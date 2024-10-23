@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import '../App.css';
+import './App.css';
 import axios from 'axios';
-import { useAppContext } from "../AppContext";
-import { Link } from 'react-router-dom';
+import { useAppContext } from "../utils/AppContext";
 import BookCard from './BookCard';
 
 function ShowBookList() {
   const [books, setBooks] = useState([]);
-
   const { backendUrl } = useAppContext();
 
   useEffect(() => {
@@ -33,18 +31,6 @@ function ShowBookList() {
           <div className='col-md-12'>
             <br />
             <h2 className='display-4 text-center'>Books List</h2>
-          </div>
-
-          <div className='col-md-11'>
-            <Link
-              to='/create-book'
-              className='btn btn-outline-warning float-right'
-            >
-              + Add New Book
-            </Link>
-            <br />
-            <br />
-            <hr />
           </div>
         </div>
 

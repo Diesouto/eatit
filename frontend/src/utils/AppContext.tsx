@@ -1,12 +1,13 @@
 import React, { createContext, useContext } from 'react';
 
-// Crea el contexto
-const AppContext = createContext();
+interface AppContextType {
+  backendUrl: string;
+}
 
-// Componente de proveedor de contexto
-// eslint-disable-next-line react/prop-types
-export const AppProvider = ({ children }) => {
-  const backendUrl = import.meta.env.VITE_BACKEND_URL; // Declara la variable aquí
+const AppContext = createContext<AppContextType | undefined>(undefined);
+
+export const AppProvider: React.FC = ({ children }) => {
+  const backendUrl = import.meta.env.VITE_BACKEND_URL; // Asegúrate de que está en env
 
   return (
     <AppContext.Provider value={{ backendUrl }}>
@@ -15,7 +16,10 @@ export const AppProvider = ({ children }) => {
   );
 };
 
-// Hook para usar el contexto
 export const useAppContext = () => {
-  return useContext(AppContext);
+  const context = useContext(AppContext);
+  if (!context) {
+    throw new Error('useAppContext must be used within an AppProvider');
+  }
+  return context;
 };

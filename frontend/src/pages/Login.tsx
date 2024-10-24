@@ -1,26 +1,33 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAppContext } from "../utils/AppContext";
+import axios from 'axios';
 
 const Login: React.FC = () => {
+  const { backendUrl } = useAppContext();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
-  // Mocks
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    // Simulate an API call to authenticate the user
-    if (email === 'cook@example.com' && password === '123') {
-      localStorage.setItem('userRole', 'cocinero');
-      navigate('/');
-    } else if (email === 'foodie@example.com' && password === '123') {
-      localStorage.setItem('userRole', 'foodie');
-      navigate('/');
-    } else {
-      alert('Invalid credentials');
+  
+    try {
+      const response = await axios.post(`${backendUrl}/api/login`, {
+        email,
+        password,
+      });
+  
+      const { token, user } = response.data;
+  
+      localStorage.setItem('token', token);
+      localStorage.setItem('user', JSON.stringify(user));
+      navigate('/')
+    } catch (error) {
+      console.error('Error during login:', error);
+      alert('Invalid credentials. Please try again.');
     }
-  };
+  };  
 
   return (
     <div className="Login">

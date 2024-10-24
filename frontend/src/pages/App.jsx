@@ -1,15 +1,18 @@
 import { useEffect, useState } from 'react';
-import { Navigate } from 'react-router-dom';
 import CookDashboard from './CookDashboard';
 import FoodieDashboard from './FoodieDashboard';
+import Login from './Login';
 
 const App = () => {
   const [role, setRole] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const userRole = localStorage.getItem('userRole');
-    setRole(userRole);
+    const userData = localStorage.getItem('user');
+    if (userData) {
+      const user = JSON.parse(userData);
+      setRole(user.role);
+    }
     setLoading(false);
   }, []);
 
@@ -22,7 +25,7 @@ const App = () => {
   } else if (role === 'foodie') {
     return <FoodieDashboard />;
   } else {
-    return <Navigate to="/login" />;;
+    return <Login />;
   }
 };
 

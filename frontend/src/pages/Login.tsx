@@ -4,30 +4,31 @@ import { useAppContext } from "../utils/AppContext";
 import axios from 'axios';
 
 const Login: React.FC = () => {
-  const { backendUrl } = useAppContext();
+  const { backendUrl, setUserId } = useAppContext(); // Get setUserId from context
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-  
+
     try {
       const response = await axios.post(`${backendUrl}/api/login`, {
         email,
         password,
       });
-  
+
       const { token, user } = response.data;
-  
+
       localStorage.setItem('token', token);
       localStorage.setItem('user', JSON.stringify(user));
-      navigate('/')
+      setUserId(user.id);
+      navigate('/');
     } catch (error) {
       console.error('Error during login:', error);
       alert('Invalid credentials. Please try again.');
     }
-  };  
+  };
 
   return (
     <div className="Login">

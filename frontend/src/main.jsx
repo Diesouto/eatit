@@ -9,7 +9,6 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
 
 // Component imports
-import ShowBookList from './components/ShowBookList';
 import App from './pages/App';
 import Login from './pages/Login';
 import RecipeDetails from './components/Recipes/RecipeDetails';
@@ -23,7 +22,6 @@ const router = createBrowserRouter([
   { path: '/signin-cook', element: <CookSignin /> },
   { path: '/signin-foodie', element: <FoodieSignin /> },
   { path: '/', element: <App /> },
-  { path: '/show', element: <ShowBookList /> },
   
   // Recipes
   { path: '/show-recipe/:id', element: <RecipeDetails /> }, 

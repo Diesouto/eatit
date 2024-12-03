@@ -2,9 +2,13 @@
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
+
+// Load Recipe model
 const Recipe = require('../../models/Recipe');
 
-// Obtener Recetas con filtros opcionales
+// @route   GET api/recipes/
+// @desc    Get all recipes/All recipes from cook user
+// @access  Public
 router.get('/', async (req, res) => {
   const { recipeStatus, chefId } = req.query;
   const filters = {};
@@ -20,7 +24,9 @@ router.get('/', async (req, res) => {
   }
 });
 
-// Detalle Receta
+// @route   GET api/recipes/:id
+// @desc    Get recipe by id
+// @access  Public
 router.get('/:id', async (req, res) => {
   try {
     const recipe = await Recipe.findById(req.params.id);
@@ -30,7 +36,9 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// Crear Receta
+// @route   POST api/recipes/
+// @desc    Add/save recipe
+// @access  Public
 router.post('/', async (req, res) => {
   try {
     const recipe = new Recipe(req.body);
@@ -41,7 +49,9 @@ router.post('/', async (req, res) => {
   }
 });
 
-// Actualizar Receta
+// @route   PUT api/recipes/:id
+// @desc    Update recipe by id
+// @access  Public
 router.put('/:id', async (req, res) => {
   try {
     const recipe = await Recipe.findByIdAndUpdate(req.params.id, req.body, { new: true });
@@ -51,7 +61,9 @@ router.put('/:id', async (req, res) => {
   }
 });
 
-// Eliminar Receta
+// @route   DELETE api/recipes/:id
+// @desc    Delete recipe by id
+// @access  Public
 router.delete('/:id', async (req, res) => {
   try {
     await Recipe.findByIdAndDelete(req.params.id);

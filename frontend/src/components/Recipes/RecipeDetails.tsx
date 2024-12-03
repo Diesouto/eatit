@@ -15,6 +15,7 @@ function ShowRecipeDetails() {
       .get(`${backendUrl}/api/recipes/${id}`)
       .then((res) => {
         setRecipe(res.data);
+        console.log(res)
       })
       .catch((err) => {
         console.error('Error from ShowRecipeDetails', err);
@@ -23,7 +24,7 @@ function ShowRecipeDetails() {
 
   const onDeleteClick = (id: string) => {
     axios
-      .delete(`${backendUrl}:8082/api/recipes/${id}`)
+      .delete(`${backendUrl}/api/recipes/${id}`)
       .then((res) => {
         navigate('/'); // Navigate back to the recipe list or main page
       })

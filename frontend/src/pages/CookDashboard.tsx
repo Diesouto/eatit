@@ -5,7 +5,7 @@ import { useAppContext } from "../utils/AppContext";
 import LogoutButton from '../components/LogoutButton';
 import { Recipe } from '../types/Recipe';
 import CreateRecipe from '../components/Recipes/CreateRecipe';
-import ShowRecipeList from '../components/Recipes/ShowRecipeList';
+import RecipeList from '../components/Recipes/RecipeList';
 
 const CookDashboard: React.FC = () => {
   const { backendUrl, userId } = useAppContext();
@@ -40,7 +40,7 @@ const CookDashboard: React.FC = () => {
       <h1>Welcome, Cocinero!</h1>
       <p>Here you can create and manage your recipes.</p>
       <LogoutButton />
-      <ShowRecipeList />
+      <RecipeList />
     </div>
   );
 };

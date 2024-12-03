@@ -4,17 +4,6 @@ const router = express.Router();
 const mongoose = require('mongoose');
 const Recipe = require('../../models/Recipe');
 
-// Crear Receta
-router.post('/', async (req, res) => {
-  try {
-    const recipe = new Recipe(req.body);
-    await recipe.save();
-    res.status(201).json(recipe);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
-});
-
 // Obtener Recetas con filtros opcionales
 router.get('/', async (req, res) => {
   const { recipeStatus, chefId } = req.query;
@@ -28,6 +17,27 @@ router.get('/', async (req, res) => {
     res.json(recipes);
   } catch (error) {
     res.status(500).json({ message: error.message });
+  }
+});
+
+// Detalle Receta
+router.get('/:id', async (req, res) => {
+  try {
+    const recipe = await Recipe.findById(req.params.id);
+    res.json(recipe);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+});
+
+// Crear Receta
+router.post('/', async (req, res) => {
+  try {
+    const recipe = new Recipe(req.body);
+    await recipe.save();
+    res.status(201).json(recipe);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
   }
 });
 

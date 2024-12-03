@@ -1,79 +1,100 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { Recipe } from "../../types/Recipe";
 import { useAppContext } from "../../utils/AppContext";
 
-const CreateRecipe = () => {
+type RecipeFormProps = {
+  mode: "create" | "edit";
+};
+
+const RecipeForm: React.FC<RecipeFormProps> = ({ mode }) => {
   const { backendUrl, userId } = useAppContext();
   const navigate = useNavigate();
+  const { id } = useParams<{ id: string }>(); // Only relevant for edit mode
 
-  console.log(userId)
-
-  const [newRecipe, setNewRecipe] = useState<Recipe>({
-    name: '',
-    image: '',
-    description: '',
+  const [recipe, setRecipe] = useState<Recipe>({
+    name: "",
+    image: "",
+    description: "",
     ingredients: [],
-    deliveryDate: '',
+    deliveryDate: "",
     unitsAvailable: 0,
     slots: 0,
-    chefId: '',
+    chefId: "",
   });
 
-  // Update chefId once userId is available
+  // Fetch existing recipe data if in edit mode
   useEffect(() => {
-    if (userId) {
-      setNewRecipe((prevRecipe) => ({
+    if (mode === "edit" && id) {
+      axios
+        .get(`${backendUrl}/api/recipes/${id}`)
+        .then((res) => {
+          setRecipe(res.data);
+        })
+        .catch((err) => {
+          console.error("Error fetching recipe for edit:", err);
+        });
+    }
+  }, [mode, id, backendUrl]);
+
+  // Set chefId for create mode
+  useEffect(() => {
+    if (mode === "create" && userId) {
+      setRecipe((prevRecipe) => ({
         ...prevRecipe,
         chefId: userId,
       }));
     }
-  }, [userId]);
+  }, [mode, userId]);
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setNewRecipe(prevRecipe => ({
+    setRecipe((prevRecipe) => ({
       ...prevRecipe,
-      [name]: value
+      [name]: value,
     }));
   };
 
   const addIngredient = () => {
-    setNewRecipe(prevRecipe => ({
+    setRecipe((prevRecipe) => ({
       ...prevRecipe,
-      ingredients: [...prevRecipe.ingredients, '']
+      ingredients: [...prevRecipe.ingredients, ""],
     }));
   };
 
   const removeIngredient = (index: number) => {
-    setNewRecipe(prevRecipe => ({
+    setRecipe((prevRecipe) => ({
       ...prevRecipe,
-      ingredients: prevRecipe.ingredients.filter((_, i) => i !== index)
+      ingredients: prevRecipe.ingredients.filter((_, i) => i !== index),
     }));
   };
 
   const onIngredientChange = (index: number, value: string) => {
-    setNewRecipe(prevRecipe => ({
+    setRecipe((prevRecipe) => ({
       ...prevRecipe,
       ingredients: prevRecipe.ingredients.map((ingredient, i) =>
         i === index ? value : ingredient
-      )
+      ),
     }));
   };
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await axios.post(`${backendUrl}/api/recipes`, newRecipe);
+      if (mode === "create") {
+        await axios.post(`${backendUrl}/api/recipes`, recipe);
+      } else if (mode === "edit" && id) {
+        await axios.put(`${backendUrl}/api/recipes/${id}`, recipe);
+      }
       navigate("/");
     } catch (error) {
-      console.error("Error creating recipe:", error);
+      console.error("Error submitting recipe:", error);
     }
   };
 
   return (
-    <div className="CreateRecipe">
+    <div className="RecipeForm">
       <div className="container">
         <div className="row">
           <div className="col-md-8 m-auto">
@@ -83,57 +104,53 @@ const CreateRecipe = () => {
             </Link>
           </div>
           <div className="col-md-10 m-auto">
-            <h1 className="display-4 text-center">Add Recipe</h1>
-            <p className="lead text-center">Create a new recipe</p>
+            <h1 className="display-4 text-center">
+              {mode === "create" ? "Add Recipe" : "Edit Recipe"}
+            </h1>
             <form onSubmit={onSubmit}>
-              {/* Recipe Name */}
               <div className="form-group">
                 <input
                   type="text"
                   placeholder="Recipe Name"
                   name="name"
                   className="form-control"
-                  value={newRecipe.name}
+                  value={recipe.name}
                   onChange={onChange}
                 />
               </div>
               <br />
-              {/* Image URL */}
               <div className="form-group">
                 <input
                   type="text"
                   placeholder="Image URL"
                   name="image"
                   className="form-control"
-                  value={newRecipe.image}
+                  value={recipe.image}
                   onChange={onChange}
                 />
               </div>
               <br />
-              {/* Description */}
               <div className="form-group">
                 <textarea
                   placeholder="Description"
                   name="description"
                   className="form-control"
-                  value={newRecipe.description}
+                  value={recipe.description}
                   onChange={onChange}
                 />
               </div>
               <br />
-              {/* Delivery Date */}
               <div className="form-group">
                 <label>Delivery Date</label>
                 <input
                   type="date"
                   name="deliveryDate"
                   className="form-control"
-                  value={newRecipe.deliveryDate}
+                  value={recipe.deliveryDate}
                   onChange={onChange}
                 />
               </div>
               <br />
-              {/* Units Available */}
               <div className="form-group">
                 <label>Units Available</label>
                 <input
@@ -141,12 +158,11 @@ const CreateRecipe = () => {
                   placeholder="Units Available"
                   name="unitsAvailable"
                   className="form-control"
-                  value={newRecipe.unitsAvailable}
+                  value={recipe.unitsAvailable}
                   onChange={onChange}
                 />
               </div>
               <br />
-              {/* Slots */}
               <div className="form-group">
                 <label>Slots</label>
                 <input
@@ -154,15 +170,14 @@ const CreateRecipe = () => {
                   placeholder="Slots"
                   name="slots"
                   className="form-control"
-                  value={newRecipe.slots}
+                  value={recipe.slots}
                   onChange={onChange}
                 />
               </div>
               <br />
-              {/* Ingredients */}
               <div className="form-group">
                 <label>Ingredients</label>
-                {newRecipe.ingredients.map((ingredient, index) => (
+                {recipe.ingredients.map((ingredient, index) => (
                   <div key={index} className="d-flex mb-2">
                     <input
                       type="text"
@@ -189,11 +204,8 @@ const CreateRecipe = () => {
                 </button>
               </div>
               <br />
-              <button
-                type="submit"
-                className="btn btn-outline-warning btn-block mt-4 mb-4 w-100"
-              >
-                Submit
+              <button type="submit" className="btn btn-outline-warning btn-block mt-4 mb-4 w-100">
+                {mode === "create" ? "Submit" : "Save Changes"}
               </button>
             </form>
           </div>
@@ -203,4 +215,4 @@ const CreateRecipe = () => {
   );
 };
 
-export default CreateRecipe;
+export default RecipeForm;

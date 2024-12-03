@@ -4,7 +4,7 @@ import axios from 'axios';
 import { useAppContext } from "../utils/AppContext";
 import LogoutButton from '../components/LogoutButton';
 import { Recipe } from '../types/Recipe';
-import CreateRecipe from '../components/Recipes/CreateRecipe';
+import CreateRecipe from '../components/Recipes/RecipeForm';
 import RecipeList from '../components/Recipes/RecipeList';
 
 const CookDashboard: React.FC = () => {

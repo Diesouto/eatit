@@ -13,8 +13,7 @@ import ShowBookList from './components/ShowBookList';
 import App from './pages/App';
 import Login from './pages/Login';
 import RecipeDetails from './components/Recipes/RecipeDetails';
-import CreateRecipe from './components/Recipes/CreateRecipe';
-import UpdateRecipeInfo from './components/Recipes/UpdateRecipeInfo';
+import RecipeForm from './components/Recipes/RecipeForm';
 
 // Routes
 const router = createBrowserRouter([
@@ -24,8 +23,8 @@ const router = createBrowserRouter([
   
   // Recipes
   { path: '/show-recipe/:id', element: <RecipeDetails /> }, 
-  { path: '/create-recipe', element: <CreateRecipe /> }, 
-  { path: '/edit-recipe/:id', element: <UpdateRecipeInfo /> }, 
+  { path: '/create-recipe', element: <RecipeForm mode="create" /> }, 
+  { path: '/edit-recipe/:id', element: <RecipeForm mode="edit" />}, 
 ]);
 
 

@@ -1,7 +1,7 @@
 import { ObjectId } from 'mongoose';
 
 export type Recipe = {
-  _id: string;
+  _id?: string;
   name: string;
   image?: string;
   description: string;

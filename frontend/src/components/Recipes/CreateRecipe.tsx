@@ -1,13 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Recipe } from "../../types/Recipe";
 import { useAppContext } from "../../utils/AppContext";
-import { ObjectId } from 'mongoose';
 
 const CreateRecipe = () => {
   const { backendUrl, userId } = useAppContext();
   const navigate = useNavigate();
+
+  console.log(userId)
 
   const [newRecipe, setNewRecipe] = useState<Recipe>({
     name: '',
@@ -17,8 +18,18 @@ const CreateRecipe = () => {
     deliveryDate: '',
     unitsAvailable: 0,
     slots: 0,
-    chefId: userId!,
+    chefId: '',
   });
+
+  // Update chefId once userId is available
+  useEffect(() => {
+    if (userId) {
+      setNewRecipe((prevRecipe) => ({
+        ...prevRecipe,
+        chefId: userId,
+      }));
+    }
+  }, [userId]);
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -28,11 +39,26 @@ const CreateRecipe = () => {
     }));
   };
 
-  const onIngredientsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const ingredients = e.target.value.split(","); // Assuming ingredients are comma-separated
+  const addIngredient = () => {
     setNewRecipe(prevRecipe => ({
       ...prevRecipe,
-      ingredients: ingredients
+      ingredients: [...prevRecipe.ingredients, '']
+    }));
+  };
+
+  const removeIngredient = (index: number) => {
+    setNewRecipe(prevRecipe => ({
+      ...prevRecipe,
+      ingredients: prevRecipe.ingredients.filter((_, i) => i !== index)
+    }));
+  };
+
+  const onIngredientChange = (index: number, value: string) => {
+    setNewRecipe(prevRecipe => ({
+      ...prevRecipe,
+      ingredients: prevRecipe.ingredients.map((ingredient, i) =>
+        i === index ? value : ingredient
+      )
     }));
   };
 
@@ -60,6 +86,7 @@ const CreateRecipe = () => {
             <h1 className="display-4 text-center">Add Recipe</h1>
             <p className="lead text-center">Create a new recipe</p>
             <form onSubmit={onSubmit}>
+              {/* Recipe Name */}
               <div className="form-group">
                 <input
                   type="text"
@@ -71,6 +98,7 @@ const CreateRecipe = () => {
                 />
               </div>
               <br />
+              {/* Image URL */}
               <div className="form-group">
                 <input
                   type="text"
@@ -82,6 +110,7 @@ const CreateRecipe = () => {
                 />
               </div>
               <br />
+              {/* Description */}
               <div className="form-group">
                 <textarea
                   placeholder="Description"
@@ -92,18 +121,9 @@ const CreateRecipe = () => {
                 />
               </div>
               <br />
+              {/* Delivery Date */}
               <div className="form-group">
-                <input
-                  type="text"
-                  placeholder="Ingredients (comma separated)"
-                  name="ingredients"
-                  className="form-control"
-                  value={newRecipe.ingredients.join(", ")}
-                  onChange={onIngredientsChange}
-                />
-              </div>
-              <br />
-              <div className="form-group">
+                <label>Delivery Date</label>
                 <input
                   type="date"
                   name="deliveryDate"
@@ -113,7 +133,9 @@ const CreateRecipe = () => {
                 />
               </div>
               <br />
+              {/* Units Available */}
               <div className="form-group">
+                <label>Units Available</label>
                 <input
                   type="number"
                   placeholder="Units Available"
@@ -124,7 +146,9 @@ const CreateRecipe = () => {
                 />
               </div>
               <br />
+              {/* Slots */}
               <div className="form-group">
+                <label>Slots</label>
                 <input
                   type="number"
                   placeholder="Slots"
@@ -134,6 +158,37 @@ const CreateRecipe = () => {
                   onChange={onChange}
                 />
               </div>
+              <br />
+              {/* Ingredients */}
+              <div className="form-group">
+                <label>Ingredients</label>
+                {newRecipe.ingredients.map((ingredient, index) => (
+                  <div key={index} className="d-flex mb-2">
+                    <input
+                      type="text"
+                      placeholder={`Ingredient ${index + 1}`}
+                      className="form-control"
+                      value={ingredient}
+                      onChange={(e) => onIngredientChange(index, e.target.value)}
+                    />
+                    <button
+                      type="button"
+                      className="btn btn-outline-danger ms-2"
+                      onClick={() => removeIngredient(index)}
+                    >
+                      -
+                    </button>
+                  </div>
+                ))}
+                <button
+                  type="button"
+                  className="btn btn-outline-success"
+                  onClick={addIngredient}
+                >
+                  + Add Ingredient
+                </button>
+              </div>
+              <br />
               <button
                 type="submit"
                 className="btn btn-outline-warning btn-block mt-4 mb-4 w-100"

@@ -2,7 +2,6 @@
 const mongoose = require('mongoose');
 
 const RecipeSchema = new mongoose.Schema({
-  _id: { type: mongoose.Schema.Types.ObjectId },
   name: { type: String, required: true },
   image: { type: String },
   description: { type: String, required: true },

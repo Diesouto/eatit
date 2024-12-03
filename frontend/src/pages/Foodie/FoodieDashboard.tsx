@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useAppContext } from "../utils/AppContext";
-import LogoutButton from '../components/LogoutButton';
-import { Recipe } from '../types/Recipe';
-import RecipeList from '../components/Recipes/RecipeList';
+import { useAppContext } from "../../utils/AppContext";
+import LogoutButton from '../../components/LogoutButton';
+import { Recipe } from '../../types/Recipe';
+import RecipeList from '../../components/Recipes/RecipeList';
 
 const FoodieDashboard = () => {
   const { backendUrl } = useAppContext();

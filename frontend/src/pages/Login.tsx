@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAppContext } from "../utils/AppContext";
 import axios from 'axios';
 
@@ -62,6 +62,12 @@ const Login: React.FC = () => {
           Login
         </button>
       </form>
+      <Link to="/signin-cook" className="btn btn-secondary float-right">
+        Sign In as a Cook
+      </Link>
+      <Link to="/signin-foodie" className="btn btn-secondary float-right">
+        Sign In as a Foodie
+      </Link>
     </div>
   );
 };

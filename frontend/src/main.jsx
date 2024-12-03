@@ -14,10 +14,14 @@ import App from './pages/App';
 import Login from './pages/Login';
 import RecipeDetails from './components/Recipes/RecipeDetails';
 import RecipeForm from './components/Recipes/RecipeForm';
+import CookSignin from './pages/Cook/CookSignin';
+import FoodieSignin from './pages/Foodie/FoodieSignin';
 
 // Routes
 const router = createBrowserRouter([
   { path: '/login', element: <Login /> },
+  { path: '/signin-cook', element: <CookSignin /> },
+  { path: '/signin-foodie', element: <FoodieSignin /> },
   { path: '/', element: <App /> },
   { path: '/show', element: <ShowBookList /> },
   

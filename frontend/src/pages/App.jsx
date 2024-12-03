@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import CookDashboard from './CookDashboard';
-import FoodieDashboard from './FoodieDashboard';
+import CookDashboard from './Cook/CookDashboard';
+import FoodieDashboard from './Foodie/FoodieDashboard';
 import Login from './Login';
 
 const App = () => {

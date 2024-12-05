@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Recipe } from '../../types/Recipe'; // Assuming Recipe type is defined in a types file
+import { Recipe } from '../../types/Recipe';
+import { useAppContext } from '../../utils/AppContext';
 
 interface RecipeCardProps {
   recipe: Recipe;
@@ -8,9 +9,15 @@ interface RecipeCardProps {
 
 const RecipeCard: React.FC<RecipeCardProps> = ({ recipe }) => {
   const navigate = useNavigate();
+  const { userRole } = useAppContext();
 
   const handleClick = () => {
-    navigate(`/show-recipe/${recipe._id}`);
+    const route =
+      userRole === 'foodie'
+        ? `/recipes/foodie/${recipe._id}`
+        : `/recipes/cook/${recipe._id}`;
+
+    navigate(route);
   };
 
   return (

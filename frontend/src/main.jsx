@@ -11,10 +11,11 @@ import 'bootstrap/dist/js/bootstrap.bundle.min';
 // Component imports
 import App from './pages/App';
 import Login from './pages/Login';
-import RecipeDetails from './components/Recipes/RecipeDetails';
 import RecipeForm from './components/Recipes/RecipeForm';
 import CookSignin from './pages/Cook/CookSignin';
+import CookRecipeDetails from './pages/Cook/CookRecipeDetails';
 import FoodieSignin from './pages/Foodie/FoodieSignin';
+import FoodieRecipeDetails from './pages/Foodie/FoodieRecipeDetails';
 
 // Routes
 const router = createBrowserRouter([
@@ -24,7 +25,8 @@ const router = createBrowserRouter([
   { path: '/', element: <App /> },
   
   // Recipes
-  { path: '/show-recipe/:id', element: <RecipeDetails /> }, 
+  { path: '/recipes/cook/:id', element: <CookRecipeDetails /> }, 
+  { path: '/recipes/foodie/:id', element: <FoodieRecipeDetails /> }, 
   { path: '/create-recipe', element: <RecipeForm mode="create" /> }, 
   { path: '/edit-recipe/:id', element: <RecipeForm mode="edit" />}, 
 ]);

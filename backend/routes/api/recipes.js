@@ -73,16 +73,106 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
-// Anotarse a una Receta
-router.post('/:id/participate', async (req, res) => {
+// @route   POST api/recipes/:id/join
+// @desc    Lets a foodie join a recipe
+// @access  Public
+router.post('/:id/join', async (req, res) => {
   try {
-    const { userId, comment, rating } = req.body;
+    const { userId } = req.body;
     const recipe = await Recipe.findById(req.params.id);
-    recipe.participants.push({ userId, comment, rating });
+    recipe.participants.push({ userId });
     await recipe.save();
     res.json(recipe);
   } catch (error) {
     res.status(400).json({ message: error.message });
+  }
+});
+
+// @route   GET api/recipes/:id/is-participant
+// @desc    Check if a user is a participant in a recipe
+// @access  Public
+router.get('/:id/is-participant', async (req, res) => {
+  const { userId } = req.query; // Pass userId in the query parameters
+
+  try {
+    const recipe = await Recipe.findById(req.params.id);
+
+    if (!recipe) {
+      return res.status(404).json({ message: 'Recipe not found' });
+    }
+
+    const isParticipant = recipe.participants.some(
+      participant => participant.userId.toString() === userId
+    );
+
+    res.json({ isParticipant });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// @route   POST api/recipes/:id/remove-participant
+// @desc    Remove a user from a recipe
+// @access  Public
+router.post('/:id/remove-participant', async (req, res) => {
+  const { userId } = req.body;
+
+  try {
+    const recipe = await Recipe.findById(req.params.id);
+
+    if (!recipe) {
+      return res.status(404).json({ message: 'Recipe not found' });
+    }
+
+    recipe.participants = recipe.participants.filter(
+      participant => participant.userId.toString() !== userId
+    );
+
+    await recipe.save();
+
+    res.json({ message: 'User removed from recipe', recipe });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// @route   POST api/recipes/:id/rate-comment
+// @desc    Lets a user rate and comment on a recipe
+// @access  Public
+router.post('/:id/rate-comment', async (req, res) => {
+  const { rating, comment, userId } = req.body;
+
+  if (!rating && !comment) {
+    return res.status(400).json({ message: 'Rating or comment is required' });
+  }
+
+  try {
+    const recipe = await Recipe.findById(req.params.id);
+
+    if (!recipe) {
+      return res.status(404).json({ message: 'Recipe not found' });
+    }
+
+    // Add or update the rating
+    if (rating) {
+      const existingRating = recipe.ratings.find(r => r.userId.toString() === userId);
+      if (existingRating) {
+        existingRating.value = rating; // Update existing rating
+      } else {
+        recipe.ratings.push({ userId, value: rating }); // Add new rating
+      }
+    }
+
+    // Add a new comment
+    if (comment) {
+      recipe.comments.push({ userId, text: comment });
+    }
+
+    await recipe.save();
+
+    res.json({ message: 'Rating and/or comment submitted successfully', recipe });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 });
 

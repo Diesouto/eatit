@@ -15,7 +15,9 @@ const FoodieRecipeDetail = () => {
   const { id } = useParams();
 
   useEffect(() => {
-    fetchParticipationStatus();
+    if (id && userId) {
+      fetchParticipationStatus();
+    }
   }, [id, userId]);
 
   useEffect(() => {
@@ -27,12 +29,19 @@ const FoodieRecipeDetail = () => {
 
   const handleJoinRecipe = async () => {
     try {
-      await axios.post(`${backendUrl}/api/recipes/${id}/join`);
+      if (!userId) {
+        alert('User ID is not available. Please log in.');
+        return;
+      }
+  
+      await axios.post(`${backendUrl}/api/recipes/${id}/join`, { userId });
       alert('Successfully signed up for the recipe!');
+      setIsParticipant(true);
     } catch (err) {
       console.error('Error signing up:', err);
+      alert('Error signing up for the recipe. Please try again.');
     }
-  };
+  };  
 
   const handleRemoveFromRecipe = async () => {
     try {
@@ -59,6 +68,7 @@ const FoodieRecipeDetail = () => {
       const { data } = await axios.get(`${backendUrl}/api/recipes/${id}/is-participant`, {
         params: { userId },
       });
+      console.log(data)
       setIsParticipant(data.isParticipant);
     } catch (error) {
       console.error('Error checking participation status:', error);

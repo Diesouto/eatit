@@ -68,7 +68,6 @@ const FoodieRecipeDetail = () => {
       const { data } = await axios.get(`${backendUrl}/api/recipes/${id}/is-participant`, {
         params: { userId },
       });
-      console.log(data)
       setIsParticipant(data.isParticipant);
     } catch (error) {
       console.error('Error checking participation status:', error);

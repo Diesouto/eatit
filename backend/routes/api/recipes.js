@@ -180,28 +180,29 @@ router.post("/:id/rate-comment", async (req, res) => {
       return res.status(404).json({ message: "Recipe not found" });
     }
 
-    // Add or update the rating
-    if (rating) {
-      const existingRating = recipe.ratings.find(
-        (r) => r.userId.toString() === userId
-      );
-      if (existingRating) {
-        existingRating.value = rating; // Update existing rating
-      } else {
-        recipe.ratings.push({ userId, value: rating }); // Add new rating
-      }
+    const participant = recipe.participants.find((p) => p.userId._id == userId);
+
+    if (!participant) {
+      return res.status(403).json({
+        message: "You must be a participant to rate or comment on this recipe",
+      });
     }
 
-    // Add a new comment
+    // Actualizar la puntuación si se proporciona
+    if (rating) {
+      participant.rating = rating;
+    }
+
+    // Actualizar el comentario si se proporciona
     if (comment) {
-      recipe.comments.push({ userId, text: comment });
+      participant.comment = comment;
     }
 
     await recipe.save();
 
     res.json({
       message: "Rating and/or comment submitted successfully",
-      recipe,
+      participant,
     });
   } catch (error) {
     res.status(500).json({ message: error.message });

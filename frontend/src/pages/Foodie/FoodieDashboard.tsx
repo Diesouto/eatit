@@ -31,7 +31,7 @@ const FoodieDashboard = () => {
       <LogoutButton />
 
       <div className="container">
-        <RecipeList recipes={recipes} />;
+        <RecipeList recipes={recipes} />
       </div>
     </div>
   );

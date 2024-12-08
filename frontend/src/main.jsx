@@ -10,18 +10,18 @@ import 'bootstrap/dist/js/bootstrap.bundle.min';
 
 // Component imports
 import App from './pages/App';
+import StarterPage from './pages/StarterPage';
+import Signin from './pages/Signin';
 import Login from './pages/Login';
 import RecipeForm from './components/Recipes/RecipeForm';
-import CookSignin from './pages/Cook/CookSignin';
 import CookRecipeDetails from './pages/Cook/CookRecipeDetails';
-import FoodieSignin from './pages/Foodie/FoodieSignin';
 import FoodieRecipeDetails from './pages/Foodie/FoodieRecipeDetails';
 
 // Routes
 const router = createBrowserRouter([
+  { path: '/start', element: <StarterPage /> },
   { path: '/login', element: <Login /> },
-  { path: '/signin-cook', element: <CookSignin /> },
-  { path: '/signin-foodie', element: <FoodieSignin /> },
+  { path: '/signin', element: <Signin /> },
   { path: '/', element: <App /> },
   
   // Recipes

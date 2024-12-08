@@ -48,7 +48,7 @@ const CookDashboard: React.FC = () => {
           </div>
         </div>
 
-        <RecipeList recipes={recipes} />;
+        <RecipeList recipes={recipes} />
       </div>
     </div>
   );

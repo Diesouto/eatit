@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 
 // Components
@@ -7,15 +7,22 @@ import { useAppContext } from "../../utils/AppContext";
 import RecipeDetails from '../../components/Recipes/RecipeDetails';
 
 const FoodieRecipeDetail = () => {
-  const [recipe, setRecipe] = useState({});
-  const [rating, setRating] = useState(0);
-  const [comment, setComment] = useState('');
   const { backendUrl, userId } = useAppContext();
-  const [isParticipant, setIsParticipant] = useState(false);
   const { id } = useParams();
+
+  const [recipe, setRecipe] = useState({});
+  const [comments, setComments] = useState([]);
+  const [isParticipant, setIsParticipant] = useState(false);
+  const [userComment, setUserComment] = useState('');
+  const [userRating, setUserRating] = useState(0);
+  const [averageRating, setAverageRating] = useState(0);
+  const [totalRatings, setTotalRatings] = useState(0);
 
   useEffect(() => {
     if (id && userId) {
+      fetchRecipe();
+      fetchComments();
+      fetchRatings();
       fetchParticipationStatus();
     }
   }, [id, userId]);
@@ -55,7 +62,7 @@ const FoodieRecipeDetail = () => {
 
   const handleRateAndComment = async () => {
     try {
-      const payload = { rating, comment, userId };
+      const payload = { userRating, userComment, userId };
       await axios.post(`${backendUrl}/api/recipes/${id}/rate-comment`, payload);
       alert('Rating and comment submitted successfully!');
     } catch (err) {
@@ -74,12 +81,63 @@ const FoodieRecipeDetail = () => {
     }
   }
 
+  const fetchRecipe = async () => {
+    try {
+      const { data } = await axios.get(`${backendUrl}/api/recipes/${id}`);
+      setRecipe(data);
+    } catch (err) {
+      console.error("Error fetching recipe:", err);
+    }
+  };
+
+  const fetchComments = async () => {
+    try {
+      const { data } = await axios.get(`${backendUrl}/api/recipes/${id}/comments`);
+      setComments(data);
+
+      // Set user's existing comment and rating (if any)
+      const userEntry = data.find((c) => c.user.id === userId);
+      if (userEntry) {
+        setUserComment(userEntry.comment || '');
+        setUserRating(userEntry.rating || 0);
+      }
+    } catch (err) {
+      console.error("Error fetching comments:", err);
+    }
+  };
+
+  const fetchRatings = async () => {
+    try {
+      const { data } = await axios.get(`${backendUrl}/api/recipes/${id}/ratings`);
+      setAverageRating(data.averageRating);
+      setTotalRatings(data.totalRatings);
+    } catch (err) {
+      console.error("Error fetching ratings:", err);
+    }
+  };
+
+  const handleEditComment = async () => {
+    try {
+      const payload = { comment: userComment, rating: userRating, userId };
+      await axios.post(`${backendUrl}/api/recipes/${id}/rate-comment`, payload);
+      alert("Your comment and rating have been updated!");
+      fetchComments();
+      fetchRatings();
+    } catch (err) {
+      console.error("Error updating comment and rating:", err);
+    }
+  };
+
   return (
     <div className='container'>
       <h1 className='text-center'>Foodie Recipe Detail</h1>
+      <Link to='/' className='btn btn-primary'>Back to Recipes</Link>
+
+      {/* Recipe details */}
       <RecipeDetails recipe={recipe} />
-      <div className='mt-3'>
-        <div>
+
+      {/* Recipe join */}
+      <section>
           {isParticipant ? (
             <button onClick={handleRemoveFromRecipe} className="btn btn-warning">
               Remove from Recipe
@@ -89,33 +147,54 @@ const FoodieRecipeDetail = () => {
               Sign Up for Recipe
             </button>
           )}
-        </div>
+      </section>
 
-        <div className='mt-3'>
-          <section className="col-6">
-            <h3>Rate this Recipe</h3>
-            <input
-              type='number'
-              min='1'
-              max='5'
-              value={rating}
-              onChange={(e) => setRating(Number(e.target.value))}
-              className='form-control'
-            />
-          </section>
-          <section className="col-6">
-            <h3>Leave a Comment</h3>
-            <textarea
-              value={comment}
-              onChange={(e) => setComment(e.target.value)}
-              className='form-control'
-            ></textarea>
-          </section>
-          <button className='btn btn-info mt-2' onClick={handleRateAndComment}>
-            Submit Rating
-          </button>
-        </div>
-      </div>
+      {/* Ratings summary */}
+      <section className="mt-3">
+        <h3>
+          Average Rating: {averageRating.toFixed(1)} ({totalRatings})
+        </h3>
+      </section>
+
+      {/* User's comment and rating */}
+      <section className='mt-3'>
+        <h3>Your Comment and Rating</h3>
+        <textarea
+          value={userComment}
+          onChange={(e) => setUserComment(e.target.value)}
+          className="form-control"
+          placeholder="Leave a comment..."
+        ></textarea>
+        <input
+          type="number"
+          value={userRating}
+          onChange={(e) => setUserRating(Number(e.target.value))}
+          className="form-control mt-2"
+          min="1"
+          max="5"
+          placeholder="Rating (1-5)"
+        />
+        <button className="btn btn-primary mt-2" onClick={handleEditComment}>
+          Submit
+        </button>
+      </section>
+
+      {/* Comments section */}
+      <section className='mt-3'>
+        <h3>Comments</h3>
+        {comments.length === 0 ? (
+          <p>No comments yet. Be the first to comment!</p>
+        ) : (
+          <ul className="list-group">
+            {comments.map((c) => (
+              <li key={c.user.id} className="list-group-item">
+                <strong>{c.user.name}</strong>: {c.comment || "No comment"}
+                {c.rating && <span> ({c.rating}/5)</span>}
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
     </div>
   );
 };

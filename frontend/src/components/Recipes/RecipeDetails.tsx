@@ -12,7 +12,7 @@ const RecipeDetails = ({ recipe }) => (
         <tr>
           <th scope='row'>2</th>
           <td>Chef</td>
-          <td>{recipe.chefId}</td>
+          <td>{recipe.chefId?.name || "Unknown"}</td>
         </tr>
         <tr>
           <th scope='row'>3</th>

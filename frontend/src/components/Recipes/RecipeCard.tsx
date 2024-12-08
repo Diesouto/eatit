@@ -22,15 +22,19 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ recipe }) => {
 
   return (
     <div
+      style={{display: 'block'}}
       className="card"
       onClick={handleClick}
       style={{ cursor: 'pointer' }}
     >
-      <div className="card-body">
-        <h3 className="card-title">{recipe.name}</h3>
-        <p className="card-text">{recipe.description}</p>
-        <p>Delivery Date: {new Date(recipe.deliveryDate).toLocaleDateString()}</p>
-        <p>Status: {recipe.status}</p>
+      <div className="card-body p-2">
+        <img style={{width: '150px', height: '150px'}} src={recipe.image}/>
+        <section>
+          <h3 className="card-title">{recipe.name}</h3>
+          <p className="card-text">{recipe.description}</p>
+          <p>Delivery Date: {new Date(recipe.deliveryDate).toLocaleDateString()}</p>
+          <p>Status: {recipe.status}</p>
+        </section>
       </div>
     </div>
   );

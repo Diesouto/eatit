@@ -17,7 +17,7 @@ router.get("/", async (req, res) => {
   if (chefId) filters.chefId = new mongoose.Types.ObjectId(chefId);
 
   try {
-    const recipes = await Recipe.find(filters);
+    const recipes = await Recipe.find(filters).populate("chefId");
     res.json(recipes);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -29,7 +29,7 @@ router.get("/", async (req, res) => {
 // @access  Public
 router.get("/:id", async (req, res) => {
   try {
-    const recipe = await Recipe.findById(req.params.id);
+    const recipe = await Recipe.findById(req.params.id).populate("chefId");
     res.json(recipe);
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -204,6 +204,68 @@ router.post("/:id/rate-comment", async (req, res) => {
       message: "Rating and/or comment submitted successfully",
       participant,
     });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// @route   GET api/recipes/:id/comments
+// @desc    Get all comments with ratings and user info for a recipe
+// @access  Public
+router.get("/:id/comments", async (req, res) => {
+  try {
+    const recipe = await Recipe.findById(req.params.id).populate(
+      "participants.userId", // Cargar información del usuario
+      "name email" // Selecciona los campos relevantes
+    );
+
+    if (!recipe) {
+      return res.status(404).json({ message: "Recipe not found" });
+    }
+
+    // Extraer comentarios y puntuaciones de los participantes
+    const comments = recipe.participants
+      .filter((p) => p.comment || p.rating) // Solo participantes con comentario o puntuación
+      .map((p) => ({
+        user: {
+          id: p.userId._id,
+          name: p.userId.name,
+          email: p.userId.email,
+        },
+        comment: p.comment || null,
+        rating: p.rating || null,
+      }));
+
+    res.json(comments);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// @route   GET api/recipes/:id/ratings
+// @desc    Get average rating and total number of ratings for a recipe
+// @access  Public
+router.get("/:id/ratings", async (req, res) => {
+  try {
+    const recipe = await Recipe.findById(req.params.id);
+
+    if (!recipe) {
+      return res.status(404).json({ message: "Recipe not found" });
+    }
+
+    const ratings = recipe.participants
+      .filter((p) => p.rating) // Solo participantes con puntuación
+      .map((p) => p.rating);
+
+    if (ratings.length === 0) {
+      return res.json({ averageRating: 0, totalRatings: 0 });
+    }
+
+    const totalRatings = ratings.length;
+    const averageRating =
+      ratings.reduce((sum, rating) => sum + rating, 0) / totalRatings;
+
+    res.json({ averageRating, totalRatings });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

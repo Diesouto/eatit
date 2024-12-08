@@ -1,10 +1,42 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { Box, Button, Card, CardContent, Typography, IconButton, TextField, Divider } from '@mui/material';
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Typography,
+  IconButton,
+  TextField,
+  Divider,
+} from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
+// Components
+import { useAppContext } from "../utils/AppContext";
+import RecipeList from '../components/Recipes/RecipeList';
+
 const Cart: React.FC = () => {
+  const { backendUrl, userId } = useAppContext();
+  const [recipes, setRecipes] = useState([]);
   const navigate = useNavigate();
+
+  const fetchCartRecipes = async () => {
+    try {
+      console.log(userId)
+      const response = await axios.get(`${backendUrl}/api/user/cart`, {
+        params: { userId },
+      });
+      setRecipes(response.data);
+    } catch (err) {
+      console.error('Error fetching cart recipes:', err);
+    }
+  };
+
+  useEffect(() => {
+    if(userId) fetchCartRecipes();
+  }, [userId]);
 
   return (
     <Box sx={{ padding: 2 }}>
@@ -18,15 +50,7 @@ const Cart: React.FC = () => {
 
       {/* Scrollable section with recipe cards */}
       <Box sx={{ maxHeight: '200px', overflowY: 'auto', mb: 2 }}>
-        {/* Example Recipe Cards */}
-        {[...Array(5)].map((_, index) => (
-          <Card key={index} sx={{ mb: 2 }}>
-            <CardContent>
-              <Typography variant="h6">Receta {index + 1}</Typography>
-              <Typography variant="body2">Descripción de la receta...</Typography>
-            </CardContent>
-          </Card>
-        ))}
+        <RecipeList recipes={recipes} />
       </Box>
 
       <Divider sx={{ mb: 2 }} />

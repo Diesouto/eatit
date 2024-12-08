@@ -1,11 +1,14 @@
 require("dotenv").config();
 const express = require("express");
-const connectDB = require("./config/db");
-const loginRoute = require("./routes/api/login");
-const signinRoute = require("./routes/api/signin");
-const recipesRoute = require("./routes/api/recipes");
 const cors = require("cors");
 const bodyParser = require("body-parser");
+
+// API Imports
+const connectDB = require("./config/db");
+const loginRoutes = require("./routes/api/login");
+const signinRoutes = require("./routes/api/signin");
+const recipesRoutes = require("./routes/api/recipes");
+const userRoutes = require("./routes/api/user");
 
 const app = express();
 
@@ -14,9 +17,10 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // Routes
-app.use("/api/login", loginRoute);
-app.use("/api/signin", signinRoute);
-app.use("/api/recipes", recipesRoute);
+app.use("/api/login", loginRoutes);
+app.use("/api/signin", signinRoutes);
+app.use("/api/recipes", recipesRoutes);
+app.use("/api/user", userRoutes);
 
 connectDB();
 

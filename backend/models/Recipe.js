@@ -1,6 +1,13 @@
 // models/Recipe.js
 const mongoose = require("mongoose");
 
+const ParticipantSchema = new mongoose.Schema({
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: "user", required: true },
+  comment: { type: String },
+  rating: { type: Number, min: 1, max: 5 },
+  hasPaid: { type: Boolean, default: false },
+});
+
 const RecipeSchema = new mongoose.Schema({
   name: { type: String, required: true },
   image: { type: String },
@@ -18,13 +25,7 @@ const RecipeSchema = new mongoose.Schema({
     },
   },
   chefId: { type: mongoose.Schema.Types.ObjectId, ref: "user", required: true },
-  participants: [
-    {
-      userId: { type: mongoose.Schema.Types.ObjectId, ref: "user" },
-      comment: { type: String },
-      rating: { type: Number, min: 1, max: 5 },
-    },
-  ],
+  participants: [ParticipantSchema],
 });
 
 module.exports = mongoose.model("recipe", RecipeSchema);

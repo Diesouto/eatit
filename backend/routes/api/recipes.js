@@ -80,7 +80,7 @@ router.delete("/:id", async (req, res) => {
 // @access  Public
 router.post("/:id/join", async (req, res) => {
   try {
-    const { userId } = req.body; // Extract userId from request body
+    const { userId } = req.body;
     const recipeId = req.params.id;
 
     if (!mongoose.Types.ObjectId.isValid(userId)) {
@@ -93,7 +93,6 @@ router.post("/:id/join", async (req, res) => {
       return res.status(404).json({ message: "Recipe not found" });
     }
 
-    // Check if user is already a participant
     const alreadyParticipant = recipe.participants.some(
       (participant) => participant.userId._id == userId
     );
@@ -102,8 +101,11 @@ router.post("/:id/join", async (req, res) => {
       return res.status(400).json({ message: "User is already a participant" });
     }
 
-    // Add user to participants
-    recipe.participants.push({ userId: new mongoose.Types.ObjectId(userId) });
+    recipe.participants.push({
+      userId: new mongoose.Types.ObjectId(userId),
+      hasPaid: false,
+    });
+
     await recipe.save();
 
     res.status(200).json({ message: "User successfully added to recipe" });

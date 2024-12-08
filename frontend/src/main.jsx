@@ -13,6 +13,7 @@ import App from './pages/App';
 import StarterPage from './pages/StarterPage';
 import Signin from './pages/Signin';
 import Login from './pages/Login';
+import Cart from './pages/Cart';
 import RecipeForm from './components/Recipes/RecipeForm';
 import CookRecipeDetails from './pages/Cook/CookRecipeDetails';
 import FoodieRecipeDetails from './pages/Foodie/FoodieRecipeDetails';
@@ -29,6 +30,8 @@ const router = createBrowserRouter([
   { path: '/recipes/foodie/:id', element: <FoodieRecipeDetails /> }, 
   { path: '/create-recipe', element: <RecipeForm mode="create" /> }, 
   { path: '/edit-recipe/:id', element: <RecipeForm mode="edit" />}, 
+
+  { path: '/cart', element: <Cart /> },
 ]);
 
 

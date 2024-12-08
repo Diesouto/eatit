@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { Box } from '@mui/material';
+
+// Components
+import { Recipe } from '../../types/Recipe';
 import { useAppContext } from "../../utils/AppContext";
 import LogoutButton from '../../components/LogoutButton';
-import { Recipe } from '../../types/Recipe';
 import RecipeList from '../../components/Recipes/RecipeList';
 import Navbar from '../../components/Navigation';
 
@@ -27,7 +30,11 @@ const FoodieDashboard = () => {
 
   return (
     <>
-      <div className="container">
+      <Box sx={{ 
+        backgroundColor: '#f5f5f5', 
+        minHeight: '100vh',
+        marginBottom: 'var(--navbar-height)'
+      }}>
         <h1>Welcome, Foodie!</h1>
         <p>Here you can explore and join recipes.</p>
         <LogoutButton />
@@ -35,7 +42,7 @@ const FoodieDashboard = () => {
         <div className="container">
           <RecipeList recipes={recipes} />
         </div>
-      </div>
+      </Box>
       <Navbar />
     </>
   );

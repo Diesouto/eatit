@@ -15,7 +15,12 @@ const Navbar: React.FC = () => {
   };
 
   return (
-    <Box sx={{ width: '100%', position: 'fixed', bottom: 0 }}>
+    <Box sx={{ 
+      width: '100%', 
+      position: 'fixed', 
+      bottom: 0,
+      boxShadow: '0px -5px 50px rgba(0, 0, 0, 0.2)',
+      }}>
       <BottomNavigation
         value={value}
         onChange={(event, newValue) => setValue(newValue)}

@@ -4,6 +4,7 @@ import { useAppContext } from "../../utils/AppContext";
 import LogoutButton from '../../components/LogoutButton';
 import { Recipe } from '../../types/Recipe';
 import RecipeList from '../../components/Recipes/RecipeList';
+import Navbar from '../../components/Navigation';
 
 const FoodieDashboard = () => {
   const { backendUrl } = useAppContext();
@@ -25,15 +26,18 @@ const FoodieDashboard = () => {
   };
 
   return (
-    <div className="container">
-      <h1>Welcome, Foodie!</h1>
-      <p>Here you can explore and join recipes.</p>
-      <LogoutButton />
-
+    <>
       <div className="container">
-        <RecipeList recipes={recipes} />
+        <h1>Welcome, Foodie!</h1>
+        <p>Here you can explore and join recipes.</p>
+        <LogoutButton />
+
+        <div className="container">
+          <RecipeList recipes={recipes} />
+        </div>
       </div>
-    </div>
+      <Navbar />
+    </>
   );
 };
 

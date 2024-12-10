@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import CookDashboard from './CookDashboard';
-import FoodieDashboard from './FoodieDashboard';
-import Login from './Login';
+import CookDashboard from './Cook/CookDashboard';
+import FoodieDashboard from './Foodie/FoodieDashboard';
+import StarterPage from './StarterPage';
 
 const App = () => {
   const [role, setRole] = useState(null);
@@ -25,7 +25,7 @@ const App = () => {
   } else if (role === 'foodie') {
     return <FoodieDashboard />;
   } else {
-    return <Login />;
+    return <StarterPage />;
   }
 };
 

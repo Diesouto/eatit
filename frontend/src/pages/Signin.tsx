@@ -8,26 +8,31 @@ import {
   TextField,
   Typography,
   IconButton,
+  MenuItem,
   Alert,
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
-const Login: React.FC = () => {
+const Registration: React.FC = () => {
   const { backendUrl, setUserId } = useAppContext();
   const navigate = useNavigate();
 
+  const [name, setName] = useState<string>('');
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
+  const [role, setRole] = useState<string>('foodie');
   const [error, setError] = useState<string>('');
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
 
     try {
-      const response = await axios.post(`${backendUrl}/api/login`, {
+      const response = await axios.post(`${backendUrl}/api/signin`, {
+        name,
         email,
         password,
+        role,
       });
 
       const { token, user } = response.data;
@@ -36,9 +41,8 @@ const Login: React.FC = () => {
       localStorage.setItem('user', JSON.stringify(user));
       setUserId(user.id);
       navigate('/');
-    } catch (error) {
-      console.error('Error during login:', error);
-      setError('Invalid credentials. Please try again.');
+    } catch (err) {
+      setError('Registration failed. Please try again.');
     }
   };
 
@@ -58,7 +62,7 @@ const Login: React.FC = () => {
       </IconButton>
 
       <Typography variant="h4" component="h1" sx={{ mb: 3 }}>
-        Login
+        Sign Up
       </Typography>
 
       {error && (
@@ -67,7 +71,17 @@ const Login: React.FC = () => {
         </Alert>
       )}
 
-      <Box component="form" onSubmit={handleLogin} sx={{ width: '100%', maxWidth: 400 }}>
+      <Box component="form" onSubmit={handleSubmit} sx={{ width: '100%', maxWidth: 400 }}>
+        <TextField
+          fullWidth
+          label="Name"
+          variant="outlined"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          required
+          sx={{ mb: 2 }}
+        />
+
         <TextField
           fullWidth
           label="Email"
@@ -90,20 +104,25 @@ const Login: React.FC = () => {
           sx={{ mb: 2 }}
         />
 
+        <TextField
+          fullWidth
+          select
+          label="Role"
+          value={role}
+          onChange={(e) => setRole(e.target.value)}
+          required
+          sx={{ mb: 3 }}
+        >
+          <MenuItem value="foodie">Foodie</MenuItem>
+          <MenuItem value="cocinero">Cocinero</MenuItem>
+        </TextField>
+
         <Button type="submit" variant="contained" fullWidth sx={{ py: 1.5 }}>
-          Login
+          Register
         </Button>
       </Box>
-
-      <Button
-        onClick={() => navigate('/signin')}
-        sx={{ mt: 2 }}
-        color="secondary"
-      >
-        Don't have an account? Sign Up
-      </Button>
     </Box>
   );
 };
 
-export default Login;
+export default Registration;

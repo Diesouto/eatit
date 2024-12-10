@@ -15,6 +15,7 @@ import Signin from './pages/Signin';
 import Login from './pages/Login';
 import Cart from './pages/Cart';
 import Account from './pages/Account';
+import Orders from './pages/Orders';
 import RecipeForm from './components/Recipes/RecipeForm';
 import CookRecipeDetails from './pages/Cook/CookRecipeDetails';
 import FoodieRecipeDetails from './pages/Foodie/FoodieRecipeDetails';
@@ -28,6 +29,7 @@ const router = createBrowserRouter([
 
   // User
   { path: '/account', element: <Account /> },
+  { path: '/orders', element: <Orders /> },
   
   // Recipes
   { path: '/recipes/cook/:id', element: <CookRecipeDetails /> }, 

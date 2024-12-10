@@ -43,8 +43,7 @@ const sections = [
 const Account: React.FC = () => {
   return (
     <>
-      <Box sx={{ 
-        minHeight: '100vh',
+      <Box sx={{
         marginBottom: 'var(--navbar-height)'
         }}>
         {/* Header section */}
@@ -99,7 +98,7 @@ const Account: React.FC = () => {
         </Box>
 
         {/* Dynamic sections */}
-        <Box sx={{ padding: '16px' }}>
+        <Box sx={{ padding: '16px', maxWidth: '500px', margin: 'auto' }}>
         <Paper sx={{ padding: 2, marginBottom: 2, boxShadow: 2 }}>
           {sections.map((section, index) => (
             <section key={index}>

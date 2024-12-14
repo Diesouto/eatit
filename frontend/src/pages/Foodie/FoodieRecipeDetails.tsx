@@ -15,7 +15,7 @@ import RecipeDetails from '../../components/Recipes/RecipeDetails';
 const FoodieRecipeDetail = () => {
   const { backendUrl, userId } = useAppContext();
   const navigate = useNavigate();
-  const { id } = useParams();
+  const { id: recipeId } = useParams();
 
   const [recipe, setRecipe] = useState({});
   const [comments, setComments] = useState([]);
@@ -25,20 +25,33 @@ const FoodieRecipeDetail = () => {
   const [averageRating, setAverageRating] = useState(0);
 
   useEffect(() => {
-    if (id && userId) {
+    if (recipeId && userId) {
       fetchRecipe();
       fetchComments();
       fetchRatings();
       fetchParticipationStatus();
     }
-  }, [id, userId]);
+  }, [recipeId, userId]);
 
-  useEffect(() => {
-    axios
-      .get(`${backendUrl}/api/recipes/${id}`)
-      .then((res) => setRecipe(res.data))
-      .catch((err) => console.error('Error fetching recipe:', err));
-  }, [id, backendUrl]);
+  const fetchRecipe = async () => {
+    try {
+      const { data } = await axios.get(`${backendUrl}/api/recipes/${recipeId}`);
+      setRecipe(data);
+    } catch (err) {
+      console.error("Error fetching recipe:", err);
+    }
+  };
+
+  const fetchParticipationStatus = async () => {
+    try {
+      const { data } = await axios.get(`${backendUrl}/api/subscriptions/${recipeId}/is-subscribed`, {
+        params: { userId },
+      });
+      setIsParticipant(data.isSubscribed);
+    } catch (error) {
+      console.error('Error checking participation status:', error);
+    }
+  };
 
   const handleJoinRecipe = async () => {
     try {
@@ -46,7 +59,7 @@ const FoodieRecipeDetail = () => {
         alert('User ID is not available. Please log in.');
         return;
       }
-      await axios.post(`${backendUrl}/api/recipes/${id}/join`, { userId });
+      await axios.post(`${backendUrl}/api/subscriptions/${recipeId}/join`, { recipeId, userId });
       alert('Successfully signed up for the recipe!');
       setIsParticipant(true);
     } catch (err) {
@@ -57,55 +70,44 @@ const FoodieRecipeDetail = () => {
 
   const handleRemoveFromRecipe = async () => {
     try {
-      await axios.post(`${backendUrl}/api/recipes/${id}/remove-participant`, { userId });
-      setIsParticipant(false);
-      alert('You have been removed from the recipe.');
+      const { data } = await axios.get(`${backendUrl}/api/subscriptions/${recipeId}/remove`, {
+        params: { recipeId, userId },
+      });
+      if (data.length > 0) {
+        await axios.delete(`${backendUrl}/api/subscriptions/${data[0]._id}`);
+        setIsParticipant(false);
+        alert('You have been removed from the recipe.');
+      }
     } catch (error) {
       console.error('Error removing from the recipe:', error);
     }
   };
 
-  const fetchParticipationStatus = async () => {
-    try {
-      const { data } = await axios.get(`${backendUrl}/api/recipes/${id}/is-participant`, {
-        params: { userId },
-      });
-      setIsParticipant(data.isParticipant);
-    } catch (error) {
-      console.error('Error checking participation status:', error);
-    }
-  }
-
-  const fetchRecipe = async () => {
-    try {
-      const { data } = await axios.get(`${backendUrl}/api/recipes/${id}`);
-      setRecipe(data);
-    } catch (err) {
-      console.error("Error fetching recipe:", err);
-    }
-  };
-
   const fetchComments = async () => {
     try {
-      const { data } = await axios.get(`${backendUrl}/api/recipes/${id}/comments`);
+      const { data } = await axios.get(`${backendUrl}/api/comments/${recipeId}`, {
+        params: { recipeId },
+      });
       setComments(data);
 
-      // Set user's existing comment and rating (if any)
-      const userEntry = data.find((c) => c.user.id === userId);
+      const userEntry = data.find((c) => String(c.userId._id) === String(userId));
       if (userEntry) {
         setUserComment(userEntry.comment || '');
         setUserRating(userEntry.rating || 0);
+      } else {
+        setUserComment('');
+        setUserRating(0);
       }
     } catch (err) {
       console.error("Error fetching comments:", err);
     }
   };
 
+
   const fetchRatings = async () => {
     try {
-      const { data } = await axios.get(`${backendUrl}/api/recipes/${id}/ratings`);
-      setAverageRating(data.averageRating);
-      fetchComments();
+      const { data } = await axios.get(`${backendUrl}/api/comments/${recipeId}/average-rating`);
+      setAverageRating(Number(data.averageRating));
     } catch (err) {
       console.error("Error fetching ratings:", err);
     }
@@ -113,8 +115,8 @@ const FoodieRecipeDetail = () => {
 
   const handleEditComment = async () => {
     try {
-      const payload = { comment: userComment, rating: userRating, userId };
-      await axios.post(`${backendUrl}/api/recipes/${id}/rate-comment`, payload);
+      const payload = { recipeId, userId, comment: userComment, rating: userRating };
+      await axios.post(`${backendUrl}/api/comments/${recipeId}`, payload);
       alert("Your comment and rating have been updated!");
       fetchComments();
       fetchRatings();
@@ -125,7 +127,6 @@ const FoodieRecipeDetail = () => {
 
   return (
     <div className='container'>
-      {/* Back button with title */}
       <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
         <IconButton onClick={() => navigate('/')}>
           <ArrowBackIcon />
@@ -133,7 +134,6 @@ const FoodieRecipeDetail = () => {
         <Typography variant="h5">Foodie Recipe Detail</Typography>
       </Box>
 
-      {/* Recipe details */}
       <RecipeDetails
         recipe={recipe}
         isParticipant={isParticipant}
@@ -147,7 +147,6 @@ const FoodieRecipeDetail = () => {
         setUserRating={setUserRating}
         onSubmitComment={handleEditComment}
       />
-
     </div>
   );
 };

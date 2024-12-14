@@ -117,7 +117,7 @@ const RecipeDetails = ({
                 <ListItem key={index}>
                   <ListItemText
                     primary={comment.comment || 'No comment'}
-                    secondary={`- ${comment.user.name} ${comment.rating}/5`}
+                    secondary={`- ${comment.userId.name} ${comment.rating}/5`}
                   />
                 </ListItem>
               ))

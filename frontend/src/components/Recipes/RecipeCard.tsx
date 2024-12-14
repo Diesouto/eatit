@@ -27,13 +27,14 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ recipe }) => {
   };
 
   return (
-    <Card 
+    <Card
       sx={{ maxWidth: 345 }}
+      className='col-4 mx-2 my-3'
       onClick={handleClick}
       style={{ cursor: 'pointer' }}
     >
       <CardMedia
-        sx={{ height: 140 }}
+        sx={{ height: 176 }}
         image={recipe.image}
       />
       <CardContent>

@@ -14,7 +14,7 @@ const RecipeList: React.FC<ShowRecipeListProps> = ({ recipes }) => {
 
   return (
     <div className="container">
-      <div className="list">{recipeList}</div>
+      <div className="row flex-row flex-nowrap">{recipeList}{recipeList}{recipeList}</div>
     </div>
   );
 };

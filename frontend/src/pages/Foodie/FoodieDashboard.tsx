@@ -32,13 +32,18 @@ const FoodieDashboard: React.FC = () => {
   return (
     <Box sx={{ minHeight: '100vh', backgroundColor: '#f5f5f5', paddingBottom: 'var(--navbar-height)' }}>
       <Header />
-      <SearchBar />
-      <AnnouncementCard />
-      <IconButtonGrid />
-      <Box sx={{ padding: '16px' }}>
-        <Typography variant="h6">Recetas preto de ti</Typography>
-        <RecipeList recipes={recipes} />
-      </Box>
+      <main role="main" className='container'>
+        <SearchBar />
+        <AnnouncementCard />
+        <IconButtonGrid />
+        <Box sx={{ padding: '16px' }}>
+          <section className='d-flex justify-content-between align-items-center'>
+            <Typography variant="h6">Recetas preto de ti</Typography>
+            <Typography>Ver todas</Typography>
+          </section>
+          <RecipeList recipes={recipes} />
+        </Box>
+      </main>
       <Navbar />
     </Box>
   );

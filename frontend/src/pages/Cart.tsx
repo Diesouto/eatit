@@ -4,8 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import {
   Box,
   Button,
-  Card,
-  CardContent,
   Typography,
   IconButton,
   TextField,
@@ -35,7 +33,7 @@ const Cart: React.FC = () => {
   };
 
   useEffect(() => {
-    if(userId) fetchCartRecipes();
+    if (userId) fetchCartRecipes();
   }, [userId]);
 
   return (

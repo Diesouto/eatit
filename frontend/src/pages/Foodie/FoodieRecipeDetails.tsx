@@ -1,6 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
+import {
+  Box,
+  Typography,
+  IconButton,
+} from '@mui/material';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 // Components
 import { useAppContext } from "../../utils/AppContext";
@@ -8,6 +14,7 @@ import RecipeDetails from '../../components/Recipes/RecipeDetails';
 
 const FoodieRecipeDetail = () => {
   const { backendUrl, userId } = useAppContext();
+  const navigate = useNavigate();
   const { id } = useParams();
 
   const [recipe, setRecipe] = useState({});
@@ -16,7 +23,6 @@ const FoodieRecipeDetail = () => {
   const [userComment, setUserComment] = useState('');
   const [userRating, setUserRating] = useState(0);
   const [averageRating, setAverageRating] = useState(0);
-  const [totalRatings, setTotalRatings] = useState(0);
 
   useEffect(() => {
     if (id && userId) {
@@ -40,7 +46,6 @@ const FoodieRecipeDetail = () => {
         alert('User ID is not available. Please log in.');
         return;
       }
-  
       await axios.post(`${backendUrl}/api/recipes/${id}/join`, { userId });
       alert('Successfully signed up for the recipe!');
       setIsParticipant(true);
@@ -48,7 +53,7 @@ const FoodieRecipeDetail = () => {
       console.error('Error signing up:', err);
       alert('Error signing up for the recipe. Please try again.');
     }
-  };  
+  };
 
   const handleRemoveFromRecipe = async () => {
     try {
@@ -57,16 +62,6 @@ const FoodieRecipeDetail = () => {
       alert('You have been removed from the recipe.');
     } catch (error) {
       console.error('Error removing from the recipe:', error);
-    }
-  };
-
-  const handleRateAndComment = async () => {
-    try {
-      const payload = { userRating, userComment, userId };
-      await axios.post(`${backendUrl}/api/recipes/${id}/rate-comment`, payload);
-      alert('Rating and comment submitted successfully!');
-    } catch (err) {
-      console.error('Error submitting rating and comment:', err);
     }
   };
 
@@ -110,7 +105,7 @@ const FoodieRecipeDetail = () => {
     try {
       const { data } = await axios.get(`${backendUrl}/api/recipes/${id}/ratings`);
       setAverageRating(data.averageRating);
-      setTotalRatings(data.totalRatings);
+      fetchComments();
     } catch (err) {
       console.error("Error fetching ratings:", err);
     }
@@ -130,71 +125,29 @@ const FoodieRecipeDetail = () => {
 
   return (
     <div className='container'>
-      <h1 className='text-center'>Foodie Recipe Detail</h1>
-      <Link to='/' className='btn btn-primary'>Back to Recipes</Link>
+      {/* Back button with title */}
+      <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+        <IconButton onClick={() => navigate('/')}>
+          <ArrowBackIcon />
+        </IconButton>
+        <Typography variant="h5">Foodie Recipe Detail</Typography>
+      </Box>
 
       {/* Recipe details */}
-      <RecipeDetails recipe={recipe} />
+      <RecipeDetails
+        recipe={recipe}
+        isParticipant={isParticipant}
+        onJoinRecipe={handleJoinRecipe}
+        onRemoveRecipe={handleRemoveFromRecipe}
+        comments={comments}
+        averageRating={averageRating}
+        userComment={userComment}
+        userRating={userRating}
+        setUserComment={setUserComment}
+        setUserRating={setUserRating}
+        onSubmitComment={handleEditComment}
+      />
 
-      {/* Recipe join */}
-      <section>
-          {isParticipant ? (
-            <button onClick={handleRemoveFromRecipe} className="btn btn-warning">
-              Remove from Recipe
-            </button>
-          ) : (
-            <button onClick={handleJoinRecipe} className="btn btn-success">
-              Sign Up for Recipe
-            </button>
-          )}
-      </section>
-
-      {/* Ratings summary */}
-      <section className="mt-3">
-        <h3>
-          Average Rating: {averageRating.toFixed(1)} ({totalRatings})
-        </h3>
-      </section>
-
-      {/* User's comment and rating */}
-      <section className='mt-3'>
-        <h3>Your Comment and Rating</h3>
-        <textarea
-          value={userComment}
-          onChange={(e) => setUserComment(e.target.value)}
-          className="form-control"
-          placeholder="Leave a comment..."
-        ></textarea>
-        <input
-          type="number"
-          value={userRating}
-          onChange={(e) => setUserRating(Number(e.target.value))}
-          className="form-control mt-2"
-          min="1"
-          max="5"
-          placeholder="Rating (1-5)"
-        />
-        <button className="btn btn-primary mt-2" onClick={handleEditComment}>
-          Submit
-        </button>
-      </section>
-
-      {/* Comments section */}
-      <section className='mt-3'>
-        <h3>Comments</h3>
-        {comments.length === 0 ? (
-          <p>No comments yet. Be the first to comment!</p>
-        ) : (
-          <ul className="list-group">
-            {comments.map((c) => (
-              <li key={c.user.id} className="list-group-item">
-                <strong>{c.user.name}</strong>: {c.comment || "No comment"}
-                {c.rating && <span> ({c.rating}/5)</span>}
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
     </div>
   );
 };

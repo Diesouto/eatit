@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { useAppContext } from "../../utils/AppContext";
-import LogoutButton from '../../components/LogoutButton';
 import { Recipe } from '../../types/Recipe';
 import RecipeList from '../../components/Recipes/RecipeList';
 
@@ -34,7 +33,6 @@ const CookDashboard: React.FC = () => {
     <div className="container">
       <h1>Welcome, Cocinero!</h1>
       <p>Here you can create and manage your recipes.</p>
-      <LogoutButton />
       <div className="container">
         <div className="row">
           <div className="col-md-12">

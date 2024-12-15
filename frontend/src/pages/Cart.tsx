@@ -17,18 +17,18 @@ import RecipeList from '../components/Recipes/RecipeList';
 
 const Cart: React.FC = () => {
   const { backendUrl, userId } = useAppContext();
-  const [recipes, setRecipes] = useState([]);
+  const [recipes, setRecipes] = useState<Recipe[]>([]); // Asegura un array vacío al inicio
   const navigate = useNavigate();
 
   const fetchCartRecipes = async () => {
     try {
-      console.log(userId)
       const response = await axios.get(`${backendUrl}/api/user/cart`, {
         params: { userId },
       });
-      setRecipes(response.data);
+      setRecipes(response.data || []); // Maneja casos donde data sea undefined
     } catch (err) {
       console.error('Error fetching cart recipes:', err);
+      setRecipes([]); // Evita estados no manejados
     }
   };
 
@@ -38,7 +38,7 @@ const Cart: React.FC = () => {
 
   return (
     <Box sx={{ padding: 2 }}>
-      {/* Back button with title */}
+      {/* Back button */}
       <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
         <IconButton onClick={() => navigate('/')}>
           <ArrowBackIcon />
@@ -46,11 +46,12 @@ const Cart: React.FC = () => {
         <Typography variant="h5">Carro</Typography>
       </Box>
 
-      {/* Scrollable section with recipe cards */}
-      <Box sx={{ maxHeight: '200px', overflowY: 'auto', mb: 2 }}>
-        <RecipeList recipes={recipes} />
+      {/* Cart Recipe List */}
+      <Box sx={{ maxHeight: '400px', overflowY: 'auto', mb: 2 }}>
+        <RecipeList recipes={recipes} useCartView />
       </Box>
 
+      {/* Resumen del pago y botones */}
       <Divider sx={{ mb: 2 }} />
 
       {/* Payment summary section */}

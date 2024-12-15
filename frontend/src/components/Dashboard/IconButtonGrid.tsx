@@ -15,6 +15,7 @@ const items: IconButtonItem[] = [
   { icon: `${baseIconURL}kebab.png`, label: 'Kebab' },
   { icon: `${baseIconURL}taco.png`, label: 'Taco' },
   { icon: `${baseIconURL}salad.png`, label: 'Salad' },
+  { icon: `${baseIconURL}other.png`, label: 'Other' },
 ];
 
 const IconButtonGrid: React.FC = () => {

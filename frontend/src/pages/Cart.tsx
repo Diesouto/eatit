@@ -18,6 +18,7 @@ import RecipeList from '../components/Recipes/RecipeList';
 const Cart: React.FC = () => {
   const { backendUrl, userId } = useAppContext();
   const [recipes, setRecipes] = useState<Recipe[]>([]);
+  const [totalPrice, setTotalPrice] = useState<Number>(0);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -26,16 +27,28 @@ const Cart: React.FC = () => {
     };
   }, [userId]);
 
+  useEffect(() => {
+    if (recipes) {
+      calculateTotalPrice()
+    };
+  }, [recipes]);
+
   const fetchCartRecipes = async () => {
     try {
       const response = await axios.get(`${backendUrl}/api/user/cart`, {
         params: { userId },
       });
       setRecipes(response.data || []);
+      calculateTotalPrice(recipes);
     } catch (err) {
       console.error('Error fetching cart recipes:', err);
       setRecipes([]);
     }
+  };
+
+  const calculateTotalPrice = () => {
+    const price = recipes.reduce((acc, currentValue) => acc + (currentValue.price || 0), 0);
+    setTotalPrice(price);
   };
 
   return (
@@ -73,15 +86,15 @@ const Cart: React.FC = () => {
       {/* Display flex for payment summary */}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
         <Typography>Subtotal:</Typography>
-        <Typography>$10.00</Typography>
+        <Typography>{totalPrice}</Typography>
       </Box>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
         <Typography>Descuento aplicable:</Typography>
-        <Typography>-$2.00</Typography>
+        <Typography>0€</Typography>
       </Box>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
         <Typography>Cargo por envío:</Typography>
-        <Typography>$3.00</Typography>
+        <Typography>0€ (Recogida)</Typography>
       </Box>
 
       <Divider sx={{ mb: 2 }} />
@@ -89,7 +102,7 @@ const Cart: React.FC = () => {
       {/* Total section */}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 4 }}>
         <Typography variant="h6">Total:</Typography>
-        <Typography variant="h6">$11.00</Typography>
+        <Typography variant="h6">{totalPrice}</Typography>
       </Box>
 
       {/* Buttons */}

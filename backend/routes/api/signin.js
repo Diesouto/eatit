@@ -1,18 +1,19 @@
-const express = require('express');
-const bcrypt = require('bcrypt');
-const { check, validationResult } = require('express-validator');
-const User = require('../../models/Users');
-const generateTokenAndUser = require('../../utils/authUtils');
+const express = require("express");
+const bcrypt = require("bcrypt");
+const { check, validationResult } = require("express-validator");
+const generateTokenAndUser = require("../../utils/authUtils");
 
 const router = express.Router();
+const User = require("../../models/User");
 
 // Signin Route (Register New User)
-router.post('/',
+router.post(
+  "/",
   [
-    check('name', 'Name is required').not().isEmpty(),
-    check('email', 'Please include a valid email').isEmail(),
-    check('password', 'Password is required').exists(),
-    check('role', 'Role is required').isIn(['foodie', 'cocinero']),
+    check("name", "Name is required").not().isEmpty(),
+    check("email", "Please include a valid email").isEmail(),
+    check("password", "Password is required").exists(),
+    check("role", "Role is required").isIn(["foodie", "cocinero"]),
   ],
   async (req, res) => {
     const errors = validationResult(req);
@@ -26,7 +27,7 @@ router.post('/',
       // Verificar si el usuario ya existe
       let user = await User.findOne({ email });
       if (user) {
-        return res.status(400).json({ msg: 'User already exists' });
+        return res.status(400).json({ msg: "User already exists" });
       }
 
       // Crear el nuevo usuario
@@ -45,7 +46,10 @@ router.post('/',
       await user.save();
 
       // Generar JWT
-      const { token, user: userData } = await generateTokenAndUser(email, password);
+      const { token, user: userData } = await generateTokenAndUser(
+        email,
+        password
+      );
 
       res.json({
         token,
@@ -58,7 +62,7 @@ router.post('/',
       });
     } catch (err) {
       console.error(err.message);
-      res.status(500).send('Server error');
+      res.status(500).send("Server error");
     }
   }
 );

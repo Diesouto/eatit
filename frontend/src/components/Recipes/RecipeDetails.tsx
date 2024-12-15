@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import {
   Box,
   Typography,
@@ -50,6 +51,9 @@ const RecipeDetails = ({
           <Typography variant="h4" gutterBottom>
             {recipe.name}
           </Typography>
+          <Link to={`/cook/${recipe.chefId._id}`}>
+            {recipe.chefId.name}
+          </Link>
           <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
             <Rating
               name="recipe-rating"

@@ -125,6 +125,10 @@ const FoodieRecipeDetail = () => {
     }
   };
 
+  if (!recipe.chefId) { 
+    return <Typography>Loading...</Typography>
+  };
+
   return (
     <div className='container'>
       <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>

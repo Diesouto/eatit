@@ -62,7 +62,7 @@ const RecipeDetails = ({
               precision={0.5}
             />
             <Typography variant="body2" sx={{ ml: 1 }}>
-              {averageRating?.toFixed(1) || 'No rating'} ({comments.length || 0})
+              {averageRating?.toFixed(1) || 'No rating'} ({comments?.length || 0})
             </Typography>
           </Box>
 
@@ -116,7 +116,7 @@ const RecipeDetails = ({
             Comments
           </Typography>
           <List>
-            {comments.length > 0 ? (
+            {comments?.length > 0 ? (
               comments.map((comment, index) => (
                 <ListItem key={index}>
                   <ListItemText

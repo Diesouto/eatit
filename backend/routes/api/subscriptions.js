@@ -15,7 +15,10 @@ router.post("/:id/join", async (req, res) => {
       return res.status(404).json({ message: "Recipe not found" });
     }
 
-    const existingSubscription = await Subscription.findOne({ userId, recipeId });
+    const existingSubscription = await Subscription.findOne({
+      userId,
+      recipeId,
+    });
 
     if (existingSubscription) {
       return res.status(400).json({ message: "User is already subscribed" });
@@ -59,6 +62,25 @@ router.get("/:id/is-subscribed", async (req, res) => {
     res.json({ isSubscribed: !!subscription });
   } catch (error) {
     res.status(500).json({ message: error.message });
+  }
+});
+
+// get subscribed users to recipe
+router.get("/api/subscriptions/:recipeId/participants", async (req, res) => {
+  try {
+    const { recipeId } = req.params;
+    const participants = await Subscription.find({ recipeId }).populate(
+      "userId",
+      "name"
+    );
+    const users = participants.map((p) => ({
+      _id: p.userId._id,
+      name: p.userId.name,
+    }));
+    res.json(users);
+  } catch (err) {
+    console.error("Error fetching participants:", err);
+    res.status(500).json({ message: "Error fetching participants" });
   }
 });
 

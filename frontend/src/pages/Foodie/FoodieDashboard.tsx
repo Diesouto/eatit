@@ -13,12 +13,19 @@ import { Recipe } from '../../types/Recipe';
 import { useAppContext } from '../../utils/AppContext';
 
 const FoodieDashboard: React.FC = () => {
-  const { backendUrl } = useAppContext();
+  const { backendUrl, userId } = useAppContext();
   const [recipes, setRecipes] = useState<Recipe[]>([]);
+  const [defaultAddress, setDefaultAddress] = useState(null);
+
+  const address = defaultAddress ? `${defaultAddress.street}, ${defaultAddress.city}` : null;
 
   useEffect(() => {
-    fetchRecipes();
-  }, []);
+    if(userId) {
+      fetchRecipes();
+      fetchDefaultAddress();
+      console.log(userId)
+    }
+  }, [userId]);
 
   const fetchRecipes = async () => {
     try {
@@ -29,9 +36,18 @@ const FoodieDashboard: React.FC = () => {
     }
   };
 
+  const fetchDefaultAddress = async () => {
+    try {
+      const { data } = await axios.get(`${backendUrl}/api/user/${userId}/default-address`);
+      setDefaultAddress(data.defaultAddress);
+    } catch (err) {
+      console.error("Error al obtener la dirección predeterminada:", err.message);
+    }
+  };
+
   return (
     <Box sx={{ minHeight: '100vh', backgroundColor: '#f5f5f5', paddingBottom: 'var(--navbar-height)' }}>
-      <Header />
+      <Header address={address} />
       <main role="main" className='container'>
         <SearchBar />
         <AnnouncementCard />

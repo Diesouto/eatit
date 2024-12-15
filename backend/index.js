@@ -12,6 +12,7 @@ const subscriptionRoutes = require("./routes/api/subscriptions");
 const orderRoutes = require("./routes/api/orders");
 const commentRoutes = require("./routes/api/comments");
 const userRoutes = require("./routes/api/user");
+const addressRoutes = require("./routes/api/address");
 
 const app = express();
 
@@ -27,6 +28,7 @@ app.use("/api/subscriptions", subscriptionRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/comments", commentRoutes);
 app.use("/api/user", userRoutes);
+app.use("/api/address", addressRoutes);
 
 connectDB();
 

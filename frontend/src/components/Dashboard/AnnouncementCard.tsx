@@ -8,7 +8,7 @@ const AnnouncementCard: React.FC = () => {
         backgroundColor: '#e3f2fd',
         borderRadius: '8px',
         padding: '16px',
-        textAlign: 'center',
+        paddingLeft: '24px',
         margin: '16px',
       }}
     >

@@ -15,6 +15,7 @@ import Signin from './pages/Signin';
 import Login from './pages/Login';
 import Cart from './pages/Cart';
 import Account from './pages/Account';
+import Address from './pages/Address';
 import Orders from './pages/Orders';
 import RecipeForm from './components/Recipes/RecipeForm';
 import CookDetails from './pages/Cook/CookDetails';
@@ -30,6 +31,7 @@ const router = createBrowserRouter([
 
   // User
   { path: '/account', element: <Account /> },
+  { path: '/addresses', element: <Address /> },
   { path: '/orders', element: <Orders /> },
   { path: '/cook/:id', element: <CookDetails /> },
   

@@ -6,6 +6,63 @@ const mongoose = require("mongoose");
 const User = require("../../models/User");
 const Recipe = require("../../models/Recipe");
 const Comment = require("../../models/Comment");
+const Address = require("../../models/Address");
+
+// @route   GET /api/user/:userId/default-address
+// @desc    Obtener la dirección predeterminada del usuario
+// @access  Public (o Private si se requiere autenticación)
+router.get("/:userId/default-address", async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    // Buscar al usuario en la base de datos
+    const user = await User.findById(userId).populate("defaultAddress");
+
+    if (!user) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
+    }
+
+    if (!user.defaultAddress) {
+      return res
+        .status(404)
+        .json({ message: "No se ha configurado una dirección predeterminada" });
+    }
+
+    // Devolver la dirección predeterminada
+    res.status(200).json({
+      defaultAddress: user.defaultAddress, // Aquí es donde se pasa la dirección predeterminada
+    });
+  } catch (err) {
+    console.error(err);
+    res
+      .status(500)
+      .json({ message: "Error al obtener la dirección predeterminada" });
+  }
+});
+
+// @route   PUT /api/user/:userId/default-address
+// @desc    Set a default address for the user
+// @access  Private
+router.put("/:id/default-address", async (req, res) => {
+  try {
+    const { addressId } = req.body;
+
+    // Buscar el usuario
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
+    }
+
+    user.defaultAddress = addressId;
+    await user.save();
+
+    res.json({ message: "Dirección predeterminada actualizada" });
+  } catch (err) {
+    res
+      .status(500)
+      .json({ message: "Error al actualizar la dirección predeterminada" });
+  }
+});
 
 // #region FOODIE
 

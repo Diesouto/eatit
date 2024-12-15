@@ -3,13 +3,14 @@ const router = express.Router();
 const mongoose = require("mongoose");
 const Recipe = require("../../models/Recipe");
 
-// Get all recipes or filter by status/chefId
+// Get all recipes or filter by status/chefId/type
 router.get("/", async (req, res) => {
-  const { recipeStatus, chefId } = req.query;
+  const { recipeStatus, chefId, type } = req.query;
   const filters = {};
 
   if (recipeStatus) filters.recipeStatus = recipeStatus;
   if (chefId) filters.chefId = new mongoose.Types.ObjectId(chefId);
+  if (type) filters.type = type;
 
   try {
     const recipes = await Recipe.find(filters).populate("chefId");

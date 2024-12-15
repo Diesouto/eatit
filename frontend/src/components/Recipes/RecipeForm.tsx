@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
+
+// Components
 import { Recipe } from "../../types/Recipe";
 import { useAppContext } from "../../utils/AppContext";
+import { RECIPE_TYPES } from "../../constants/recipeTypes";
 
 type RecipeFormProps = {
   mode: "create" | "edit";
@@ -21,7 +24,9 @@ const RecipeForm: React.FC<RecipeFormProps> = ({ mode }) => {
     deliveryDate: "",
     unitsAvailable: 0,
     slots: 0,
+    price: 0,
     chefId: "",
+    type: "",
   });
 
   // Fetch existing recipe data if in edit mode
@@ -141,6 +146,23 @@ const RecipeForm: React.FC<RecipeFormProps> = ({ mode }) => {
               </div>
               <br />
               <div className="form-group">
+                <label>Recipe Type</label>
+                <select
+                  name="type"
+                  className="form-control"
+                  value={recipe.type || ""}
+                  onChange={(e) => setRecipe({ ...recipe, type: e.target.value })}
+                >
+                  <option value="" disabled>Select Recipe Type</option>
+                  {RECIPE_TYPES.map((type) => (
+                    <option key={type.label} value={type.label}>
+                      {type.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <br />
+              <div className="form-group">
                 <label>Delivery Date</label>
                 <input
                   type="date"
@@ -171,6 +193,18 @@ const RecipeForm: React.FC<RecipeFormProps> = ({ mode }) => {
                   name="slots"
                   className="form-control"
                   value={recipe.slots}
+                  onChange={onChange}
+                />
+              </div>
+              <br />
+              <div className="form-group">
+                <label>Price</label>
+                <input
+                  type="number"
+                  placeholder="Price"
+                  name="price"
+                  className="form-control"
+                  value={recipe.price}
                   onChange={onChange}
                 />
               </div>

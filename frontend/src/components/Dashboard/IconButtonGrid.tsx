@@ -1,28 +1,19 @@
 import React, { useState } from 'react';
 import { Box, Typography } from '@mui/material';
 
-interface IconButtonItem {
-  icon: string; // Use string to store src path
-  label: string;
+import { RECIPE_TYPES } from "../../constants/recipeTypes";
+
+interface IconButtonGridProps {
+  onTypeSelect: (type: string | null) => void; // Callback to parent
 }
 
-const baseIconURL = "/food-icons/";
-
-const items: IconButtonItem[] = [
-  { icon: `${baseIconURL}burger.png`, label: 'Burger' },
-  { icon: `${baseIconURL}pizza.png`, label: 'Pizza' },
-  { icon: `${baseIconURL}ramen.png`, label: 'Ramen' },
-  { icon: `${baseIconURL}kebab.png`, label: 'Kebab' },
-  { icon: `${baseIconURL}taco.png`, label: 'Taco' },
-  { icon: `${baseIconURL}salad.png`, label: 'Salad' },
-  { icon: `${baseIconURL}other.png`, label: 'Other' },
-];
-
-const IconButtonGrid: React.FC = () => {
+const IconButtonGrid: React.FC<IconButtonGridProps> = ({ onTypeSelect }) => {
   const [selected, setSelected] = useState<string | null>(null);
 
   function manageSelected(newSelected) {
-    newSelected === selected ? setSelected('') : setSelected(newSelected)
+    const updatedSelected = newSelected === selected ? null : newSelected;
+    setSelected(updatedSelected);
+    onTypeSelect(updatedSelected);
   }
 
   return (
@@ -33,7 +24,7 @@ const IconButtonGrid: React.FC = () => {
         padding: '16px',
       }}
     >
-      {items.map((item, index) => (
+      {RECIPE_TYPES.map((item, index) => (
         <Box
           key={index}
           sx={{

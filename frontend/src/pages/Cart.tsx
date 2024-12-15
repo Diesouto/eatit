@@ -17,24 +17,26 @@ import RecipeList from '../components/Recipes/RecipeList';
 
 const Cart: React.FC = () => {
   const { backendUrl, userId } = useAppContext();
-  const [recipes, setRecipes] = useState<Recipe[]>([]); // Asegura un array vacío al inicio
+  const [recipes, setRecipes] = useState<Recipe[]>([]);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (userId) {
+      fetchCartRecipes()
+    };
+  }, [userId]);
 
   const fetchCartRecipes = async () => {
     try {
       const response = await axios.get(`${backendUrl}/api/user/cart`, {
         params: { userId },
       });
-      setRecipes(response.data || []); // Maneja casos donde data sea undefined
+      setRecipes(response.data || []);
     } catch (err) {
       console.error('Error fetching cart recipes:', err);
-      setRecipes([]); // Evita estados no manejados
+      setRecipes([]);
     }
   };
-
-  useEffect(() => {
-    if (userId) fetchCartRecipes();
-  }, [userId]);
 
   return (
     <Box sx={{ padding: 2 }}>

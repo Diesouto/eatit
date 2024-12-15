@@ -16,20 +16,24 @@ const FoodieDashboard: React.FC = () => {
   const { backendUrl, userId } = useAppContext();
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [defaultAddress, setDefaultAddress] = useState(null);
+  const [selectedType, setSelectedType] = useState<string | null>(null); // Track selected type
 
   const address = defaultAddress ? `${defaultAddress.street}, ${defaultAddress.city}` : null;
 
   useEffect(() => {
-    if(userId) {
+    if (userId) {
       fetchRecipes();
       fetchDefaultAddress();
-      console.log(userId)
     }
-  }, [userId]);
+  }, [userId, selectedType]);
 
   const fetchRecipes = async () => {
     try {
-      const response = await axios.get(`${backendUrl}/api/recipes`);
+      const response = await axios.get(`${backendUrl}/api/recipes`, {
+        params: {
+          type: selectedType,
+        }
+      });
       setRecipes(response.data);
     } catch (error) {
       console.error('Error fetching recipes:', error);
@@ -51,7 +55,7 @@ const FoodieDashboard: React.FC = () => {
       <main role="main" className='container'>
         <SearchBar />
         <AnnouncementCard />
-        <IconButtonGrid />
+        <IconButtonGrid onTypeSelect={setSelectedType} /> {/* Pass callback */}
         <Box sx={{ padding: '16px' }}>
           <section className='d-flex justify-content-between align-items-center'>
             <Typography variant="h6">Recetas preto de ti</Typography>

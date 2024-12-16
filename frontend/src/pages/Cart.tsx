@@ -51,6 +51,23 @@ const Cart: React.FC = () => {
     setTotalPrice(price);
   };
 
+  const handlePayment = async () => {
+    try {
+      const response = await axios.post(`${backendUrl}/api/orders/create`, {
+        userId,
+        recipes,
+        totalPrice,
+      });
+  
+      if (response.status === 201) {
+        setRecipes([]);
+        navigate('/orders');
+      }
+    } catch (err) {
+      console.error('Error creating order:', err);
+    }
+  };
+
   return (
     <Box sx={{ padding: 2 }}>
       {/* Back button */}
@@ -110,7 +127,12 @@ const Cart: React.FC = () => {
         <Button variant="outlined" color="secondary" sx={{ width: '48%' }} onClick={() => navigate('/some-path')}>
           Añadir más
         </Button>
-        <Button variant="contained" color="primary" sx={{ width: '48%' }} onClick={() => navigate('/payment')}>
+        <Button
+          variant="contained"
+          color="primary"
+          sx={{ width: '48%' }}
+          onClick={handlePayment}
+        >
           Pagar
         </Button>
       </Box>

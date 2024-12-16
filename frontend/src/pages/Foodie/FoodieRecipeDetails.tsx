@@ -70,18 +70,24 @@ const FoodieRecipeDetail = () => {
 
   const handleRemoveFromRecipe = async () => {
     try {
-      const { data } = await axios.get(`${backendUrl}/api/subscriptions/${recipeId}/remove`, {
-        params: { recipeId, userId },
+      const { data } = await axios.get(`${backendUrl}/api/subscriptions/${recipeId}/is-subscribed`, {
+        params: { userId },
       });
-      if (data.length > 0) {
-        await axios.delete(`${backendUrl}/api/subscriptions/${data[0]._id}`);
+  
+      if (data.isSubscribed) {
+        await axios.delete(`${backendUrl}/api/subscriptions/${recipeId}/remove`, {
+          data: { userId },
+        });
+  
         setIsParticipant(false);
         alert('You have been removed from the recipe.');
+      } else {
+        alert('You are not subscribed to this recipe.');
       }
     } catch (error) {
-      console.error('Error removing from the recipe:', error);
+      alert('There was an error. Please try again later.');
     }
-  };
+  };  
 
   const fetchComments = async () => {
     try {

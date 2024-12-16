@@ -7,6 +7,7 @@ const User = require("../../models/User");
 const Recipe = require("../../models/Recipe");
 const Comment = require("../../models/Comment");
 const Address = require("../../models/Address");
+const Subscription = require("../../models/Subscription");
 
 // @route   GET /api/user/:userId/default-address
 // @desc    Obtener la dirección predeterminada del usuario
@@ -78,13 +79,15 @@ router.get("/cart", async (req, res) => {
   }
 
   try {
-    // Buscar recetas donde el usuario está en participants y no ha pagado
-    const recipes = await Recipe.find({
-      "participants.userId": userId,
-      "participants.hasPaid": false,
-    }).populate("chefId");
+    const subscriptions = await Subscription.find({
+      userId,
+      hasPaid: false,
+    }).populate("recipeId");
 
-    res.json(recipes);
+    const recipes = subscriptions.map((subscription) => subscription.recipeId);
+    const populatedRecipes = await Recipe.populate(recipes, { path: "chefId" });
+
+    res.json(populatedRecipes);
   } catch (error) {
     console.error("Error fetching user's cart:", error);
     res.status(500).json({ message: error.message });

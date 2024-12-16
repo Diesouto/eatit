@@ -9,6 +9,9 @@ interface RecipeListProps {
 }
 
 const RecipeList: React.FC<RecipeListProps> = ({ recipes, useCartView = false }) => {
+  if(useCartView && !recipes || recipes.length === 0) {
+    return <p>No has añadido recetas al carro.</p>;
+  }
   if (!recipes || recipes.length === 0) {
     return <p>No hay recetas disponibles en este momento.</p>;
   }
@@ -23,7 +26,7 @@ const RecipeList: React.FC<RecipeListProps> = ({ recipes, useCartView = false })
 
   return (
     <div className="container">
-      <div className="row flex-row flex-nowrap">{recipeList}</div>
+      <div className="row">{recipeList}</div>
     </div>
   );
 };

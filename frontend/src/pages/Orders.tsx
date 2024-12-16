@@ -78,7 +78,7 @@ const OrdersPage: React.FC = () => {
               name={order.recipes.map(recipe => recipe.name).join(', ')}
               price={order.totalPrice}
               dishes={order.recipes.length}
-              orderId={order._id}
+              orderId={order._id} // order._id se pasa al OrderCard
               arrivalTime="25 mins"
               status={order.status}
             />

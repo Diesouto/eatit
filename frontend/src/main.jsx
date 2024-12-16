@@ -17,6 +17,7 @@ import Cart from './pages/Cart';
 import Account from './pages/Account';
 import Address from './pages/Address';
 import Orders from './pages/Orders';
+import OrderDetails from './pages/OrderDetails';
 import RecipeForm from './components/Recipes/RecipeForm';
 import CookDetails from './pages/Cook/CookDetails';
 import CookRecipeDetails from './pages/Cook/CookRecipeDetails';
@@ -33,6 +34,7 @@ const router = createBrowserRouter([
   { path: '/account', element: <Account /> },
   { path: '/addresses', element: <Address /> },
   { path: '/orders', element: <Orders /> },
+  { path: '/order/:id', element: <OrderDetails /> },
   { path: '/cook/:id', element: <CookDetails /> },
   
   // Recipes

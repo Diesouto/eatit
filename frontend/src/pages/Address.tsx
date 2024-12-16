@@ -2,12 +2,12 @@ import React, { useEffect, useState } from "react";
 import { Box, Card, CardContent, Typography, Button, Grid, Modal, TextField, IconButton } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import CloseIcon from "@mui/icons-material/Close";
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useNavigate } from 'react-router-dom';
 import axios from "axios";
 
 // Components
 import { useAppContext } from "../utils/AppContext";
+import BackButton from '../components/BackButton';
 
 const Address = () => {
   const { backendUrl, userId } = useAppContext();
@@ -101,13 +101,7 @@ const Address = () => {
 
   return (
     <Box sx={{ padding: 3 }}>
-      {/* Back button with title */}
-      <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-        <IconButton onClick={() => navigate('/')}>
-          <ArrowBackIcon />
-        </IconButton>
-        <Typography variant="h5">Mis direcciones</Typography>
-      </Box>
+      <BackButton title="Mis direcciones"/>
 
       <Grid container spacing={2}>
         {addresses.map((address) => (

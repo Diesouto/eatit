@@ -4,13 +4,12 @@ import axios from 'axios';
 import {
   Box,
   Typography,
-  IconButton,
 } from '@mui/material';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 // Components
 import { useAppContext } from "../../utils/AppContext";
 import RecipeDetails from '../../components/Recipes/RecipeDetails';
+import BackButton from "../../components/BackButton";
 
 const FoodieRecipeDetail = () => {
   const { backendUrl, userId } = useAppContext();
@@ -137,12 +136,7 @@ const FoodieRecipeDetail = () => {
 
   return (
     <div className='container'>
-      <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-        <IconButton onClick={() => navigate('/')}>
-          <ArrowBackIcon />
-        </IconButton>
-        <Typography variant="h5">Foodie Recipe Detail</Typography>
-      </Box>
+      <BackButton title="Foodie Recipe Detail"/>
 
       <RecipeDetails
         recipe={recipe}

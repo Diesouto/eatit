@@ -5,15 +5,14 @@ import {
   Box,
   Button,
   Typography,
-  IconButton,
   TextField,
   Divider,
 } from '@mui/material';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 // Components
 import { useAppContext } from "../utils/AppContext";
 import RecipeList from '../components/Recipes/RecipeList';
+import BackButton from '../components/BackButton';
 
 const Cart: React.FC = () => {
   const { backendUrl, userId } = useAppContext();
@@ -70,13 +69,7 @@ const Cart: React.FC = () => {
 
   return (
     <Box sx={{ padding: 2 }}>
-      {/* Back button */}
-      <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-        <IconButton onClick={() => navigate('/')}>
-          <ArrowBackIcon />
-        </IconButton>
-        <Typography variant="h5">Carro</Typography>
-      </Box>
+      <BackButton title="Carro"/>
 
       {/* Cart Recipe List */}
       <Box sx={{ maxHeight: '400px', overflowY: 'auto', mb: 2 }}>

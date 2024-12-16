@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card, CardContent, Typography, Box, Avatar, Button, Divider } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import { shadows } from '@mui/system';
+import { Link } from 'react-router-dom'; // Importa Link
 
 interface OrderCardProps {
   name: string;
@@ -65,9 +65,16 @@ const OrderCard: React.FC<OrderCardProps> = ({ name, price, dishes, orderId, arr
           <Button variant="outlined" color="secondary" sx={{ borderRadius: '20px', px: 3 }}>
             Cancelar
           </Button>
-          <Button variant="contained" color="primary" sx={{ borderRadius: '20px', px: 3 }}>
-            Seguir pedido
-          </Button>
+          {/* Agrega el Link aquí */}
+          <Link to={`/order/${orderId}`} style={{ textDecoration: 'none' }}>
+            <Button
+              variant="contained"
+              color="primary"
+              sx={{ borderRadius: '20px', px: 3 }}
+            >
+              Seguir pedido
+            </Button>
+          </Link>
         </Box>
       </CardContent>
     </Card>

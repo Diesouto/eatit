@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import { Box, Typography, IconButton, List, ListItem, Avatar } from "@mui/material";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { Box, Typography, List, ListItem, Avatar } from "@mui/material";
 import axios from "axios";
 
 // Components
 import { useAppContext } from "../../utils/AppContext";
 import RecipeDetails from "../../components/Recipes/RecipeDetails";
+import BackButton from "../../components/BackButton";
 
 const CookRecipeDetail = () => {
   const [recipe, setRecipe] = useState({});
@@ -54,12 +54,7 @@ const CookRecipeDetail = () => {
   return (
     <div className="container">
       {/* Header */}
-      <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
-        <IconButton onClick={() => navigate("/")}>
-          <ArrowBackIcon />
-        </IconButton>
-        <Typography variant="h5">Cook Recipe Detail</Typography>
-      </Box>
+      <BackButton title="Cook Recipe Detail"/>
 
       {/* Recipe Details */}
       <RecipeDetails recipe={recipe} />

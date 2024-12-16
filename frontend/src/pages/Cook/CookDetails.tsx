@@ -10,12 +10,11 @@ import {
   Grid,
   Button,
   Divider,
-  IconButton
 } from "@mui/material";
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 // Components
 import { useAppContext } from "../../utils/AppContext";
+import BackButton from "../../components/BackButton";
 
 interface Recipe {
   id: string;
@@ -70,12 +69,7 @@ const CookDetails = () => {
   return (
     <Box sx={{ maxWidth: 600, mx: "auto", my: 4 }}>
       {/* Back button */}
-      <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-        <IconButton onClick={() => navigate('/')}>
-          <ArrowBackIcon />
-        </IconButton>
-        <Typography variant="h5">Cook Detail</Typography>
-      </Box>
+      <BackButton to="/" title="Cook Detail"/>
 
       {/* Header with cook details */}
       <Card>

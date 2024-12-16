@@ -54,6 +54,43 @@ router.get("/user/:userId", async (req, res) => {
   }
 });
 
+// get order
+router.get("/:orderId", async (req, res) => {
+  const { orderId } = req.params;
+
+  try {
+    const order = await Order.findById(orderId);
+
+    if (!order) return res.status(404).json({ message: "Order not found" });
+
+    res.status(200).json(order);
+  } catch (error) {
+    console.error("Error obtaining order status:", error);
+    res.status(500).json({ message: "Error obtaining order status" });
+  }
+});
+
+// Update order state
+router.put("/:orderId", async (req, res) => {
+  const { orderId } = req.params;
+  const { status } = req.body;
+
+  try {
+    const updatedOrder = await Order.findByIdAndUpdate(
+      orderId,
+      { status },
+      { new: true }
+    );
+    if (!updatedOrder)
+      return res.status(404).json({ message: "Order not found" });
+
+    res.status(200).json(updatedOrder);
+  } catch (error) {
+    console.error("Error updating order status:", error);
+    res.status(500).json({ message: "Error updating order status" });
+  }
+});
+
 // Cancelar pedido
 router.put("/cancel/:orderId", async (req, res) => {
   const { orderId } = req.params;

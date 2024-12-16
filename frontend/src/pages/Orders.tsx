@@ -5,7 +5,7 @@ import Navbar from '../components/Navigation';
 import OrderCard from '../components/Orders/OrderCard';
 import { useAppContext } from "../utils/AppContext";
 
-const OrdersPage: React.FC = () => {
+const Orders: React.FC = () => {
   const { backendUrl, userId } = useAppContext();
   const [tab, setTab] = useState<'next' | 'history'>('next');
   const [orders, setOrders] = useState<{ nextOrders: any[]; historyOrders: any[] }>({
@@ -14,8 +14,8 @@ const OrdersPage: React.FC = () => {
   });
 
   useEffect(() => {
-    if(userId) fetchOrders();
-  }, [userId]);
+    if (userId) fetchOrders();
+  }, [userId, tab]);  // Añadimos tab como dependencia para que se actualicen las órdenes según la pestaña
 
   const handleTabChange = (event: React.MouseEvent<HTMLElement>, newTab: 'next' | 'history') => {
     if (newTab) setTab(newTab);
@@ -24,9 +24,18 @@ const OrdersPage: React.FC = () => {
   const fetchOrders = async () => {
     try {
       const response = await axios.get(`${backendUrl}/api/orders/user/${userId}`);
-      setOrders(response.data);
+      setOrders(response.data);  // Actualizamos las órdenes desde la respuesta de la API
     } catch (err) {
       console.error('Error fetching orders:', err);
+    }
+  };
+
+  const cancelOrder = async (orderId: string) => {
+    try {
+      await axios.put(`${backendUrl}/api/orders/cancel/${orderId}`);
+      fetchOrders();  // Refrescamos las órdenes después de cancelar una
+    } catch (err) {
+      console.error('Error cancelling order:', err);
     }
   };
 
@@ -78,9 +87,10 @@ const OrdersPage: React.FC = () => {
               name={order.recipes.map(recipe => recipe.name).join(', ')}
               price={order.totalPrice}
               dishes={order.recipes.length}
-              orderId={order._id} // order._id se pasa al OrderCard
+              orderId={order._id}
               arrivalTime="25 mins"
               status={order.status}
+              onCancelOrder={cancelOrder} 
             />
           ))}
         </Box>
@@ -90,4 +100,4 @@ const OrdersPage: React.FC = () => {
   );
 };
 
-export default OrdersPage;
+export default Orders;

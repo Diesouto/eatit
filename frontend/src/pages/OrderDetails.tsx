@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Box, Typography, Button, Chip, Divider } from '@mui/material';
+import { Box, Typography, Button, Chip, Divider, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
 import { useParams, useNavigate } from 'react-router-dom';
 
 // Components
@@ -12,11 +12,14 @@ const OrderDetails: React.FC = () => {
   const { backendUrl, userId } = useAppContext();
   const { id: orderId } = useParams();
   const navigate = useNavigate();
+
+  const [open, setOpen] = useState(false); // State to manage dialog visibility
   const [order, setOrder] = useState<any>(null);
   const [status, setStatus] = useState<string>('');
+  const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
 
   useEffect(() => {
-    if(orderId) {
+    if (orderId) {
       fetchOrderDetails();
     }
   }, [orderId]);
@@ -24,9 +27,9 @@ const OrderDetails: React.FC = () => {
   const fetchOrderDetails = async () => {
     try {
       const response = await axios.get(`${backendUrl}/api/orders/${orderId}`);
+      console.log(response);
       setOrder(response.data);
       setStatus(response.data.status);
-      console.log(order)
     } catch (err) {
       console.error('Error fetching order details:', err);
     }
@@ -43,7 +46,24 @@ const OrderDetails: React.FC = () => {
 
   const handleCancelOrder = () => {
     updateOrderStatus('cancelled');
-    navigate('/orders'); // Redirige a la lista de pedidos
+    setOpen(false); // Close the dialog after confirming
+    navigate('/orders'); // Redirect to orders list
+  };
+
+  const handleCancelClick = (orderId: string) => {
+    setSelectedOrderId(orderId);
+    setOpen(true); // Open the confirmation dialog
+  };
+
+  const handleClose = () => {
+    setOpen(false); // Close the dialog
+    setSelectedOrderId(null); // Reset selected order id
+  };
+
+  const handleConfirmCancel = () => {
+    if (selectedOrderId) {
+      handleCancelOrder(); // Cancel the order
+    }
   };
 
   if (!order) return <Typography>Cargando...</Typography>;
@@ -51,7 +71,7 @@ const OrderDetails: React.FC = () => {
   return (
     <>
       <Box sx={{ padding: 2 }}>
-        <BackButton to="/cart" title="Estado"/>
+        <BackButton to="/orders" title="Estado"/>
 
         {/* Estado */}
         <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
@@ -63,8 +83,8 @@ const OrderDetails: React.FC = () => {
         </Box>
 
         {/* Detalles de los platos */}
-        {order.recipes.map((recipe: any) => (
-          <Box key={recipe._id} sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+        {order.recipes.map((recipe: any, index: number) => (
+          <Box key={recipe._id || index} sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
             <img
               src={recipe.image || '/default-image.jpg'}
               alt={recipe.name}
@@ -103,13 +123,30 @@ const OrderDetails: React.FC = () => {
           <Button
             variant="outlined"
             color="error"
-            onClick={handleCancelOrder}
+            onClick={() => handleCancelClick(orderId)} // Trigger confirmation dialog
           >
             Cancelar Pedido
           </Button>
         </Box>
       </Box>
+
       <Navbar />
+
+      {/* Dialog de confirmación */}
+      <Dialog open={open} onClose={handleClose}>
+        <DialogTitle>Confirmar cancelación</DialogTitle>
+        <DialogContent>
+          <Typography>¿Estás seguro de que deseas cancelar este pedido?</Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose} color="primary">
+            Cancelar
+          </Button>
+          <Button onClick={handleConfirmCancel} color="secondary">
+            Confirmar
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 };

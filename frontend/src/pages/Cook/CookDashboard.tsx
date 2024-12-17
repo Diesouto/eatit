@@ -61,6 +61,7 @@ const CookDashboard: React.FC = () => {
 
       {/* Modal for adding a new recipe */}
       <Modal
+        sx={{overflow:'scroll',}}
         open={openModal}
         onClose={handleCloseModal}
         aria-labelledby="add-recipe-modal"
@@ -81,7 +82,7 @@ const CookDashboard: React.FC = () => {
           <Typography variant="h6" gutterBottom>
             Add New Recipe
           </Typography>
-          <RecipeForm onClose={handleCloseModal} fetchRecipes={fetchRecipes} />
+          <RecipeForm mode="create" />
         </Box>
       </Modal>
 

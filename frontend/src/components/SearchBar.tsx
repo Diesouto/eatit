@@ -8,7 +8,7 @@ const SearchBar: React.FC = () => {
       sx={{
         display: 'flex',
         alignItems: 'center',
-        backgroundColor: '#f5f5f5',
+        backgroundColor: 'white',
         borderRadius: '8px',
         padding: '8px 16px',
         margin: '16px',

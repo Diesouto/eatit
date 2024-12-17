@@ -8,7 +8,11 @@ const connectDB = require("./config/db");
 const loginRoutes = require("./routes/api/login");
 const signinRoutes = require("./routes/api/signin");
 const recipesRoutes = require("./routes/api/recipes");
+const subscriptionRoutes = require("./routes/api/subscriptions");
+const orderRoutes = require("./routes/api/orders");
+const commentRoutes = require("./routes/api/comments");
 const userRoutes = require("./routes/api/user");
+const addressRoutes = require("./routes/api/address");
 
 const app = express();
 
@@ -20,7 +24,11 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use("/api/login", loginRoutes);
 app.use("/api/signin", signinRoutes);
 app.use("/api/recipes", recipesRoutes);
+app.use("/api/subscriptions", subscriptionRoutes);
+app.use("/api/orders", orderRoutes);
+app.use("/api/comments", commentRoutes);
 app.use("/api/user", userRoutes);
+app.use("/api/address", addressRoutes);
 
 connectDB();
 

@@ -4,55 +4,79 @@ import { useNavigate } from 'react-router-dom';
 import {
   Box,
   Button,
-  Card,
-  CardContent,
   Typography,
-  IconButton,
   TextField,
   Divider,
 } from '@mui/material';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 // Components
 import { useAppContext } from "../utils/AppContext";
 import RecipeList from '../components/Recipes/RecipeList';
+import BackButton from '../components/BackButton';
 
 const Cart: React.FC = () => {
   const { backendUrl, userId } = useAppContext();
-  const [recipes, setRecipes] = useState([]);
+  const [recipes, setRecipes] = useState<Recipe[]>([]);
+  const [totalPrice, setTotalPrice] = useState<Number>(0);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (userId) {
+      fetchCartRecipes()
+    };
+  }, [userId]);
+
+  useEffect(() => {
+    if (recipes) {
+      calculateTotalPrice()
+    };
+  }, [recipes]);
 
   const fetchCartRecipes = async () => {
     try {
-      console.log(userId)
       const response = await axios.get(`${backendUrl}/api/user/cart`, {
         params: { userId },
       });
-      setRecipes(response.data);
+      setRecipes(response.data || []);
+      calculateTotalPrice(recipes);
     } catch (err) {
       console.error('Error fetching cart recipes:', err);
+      setRecipes([]);
     }
   };
 
-  useEffect(() => {
-    if(userId) fetchCartRecipes();
-  }, [userId]);
+  const calculateTotalPrice = () => {
+    const price = recipes.reduce((acc, currentValue) => acc + (currentValue.price || 0), 0);
+    setTotalPrice(price);
+  };
+
+  const handlePayment = async () => {
+    try {
+      const response = await axios.post(`${backendUrl}/api/orders/create`, {
+        userId,
+        recipes,
+        totalPrice,
+      });
+  
+      if (response.status === 201) {
+        setRecipes([]);
+        navigate('/orders');
+      }
+    } catch (err) {
+      console.error('Error creating order:', err);
+    }
+  };
 
   return (
     <Box sx={{ padding: 2 }}>
-      {/* Back button with title */}
-      <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-        <IconButton onClick={() => navigate('/')}>
-          <ArrowBackIcon />
-        </IconButton>
-        <Typography variant="h5">Carro</Typography>
+      <BackButton title="Carro"/>
+
+      {/* Cart Recipe List */}
+      <Box sx={{ maxHeight: '400px', overflowY: 'auto', mb: 2 }}>
+        <RecipeList recipes={recipes} useCartView />
       </Box>
 
-      {/* Scrollable section with recipe cards */}
-      <Box sx={{ maxHeight: '200px', overflowY: 'auto', mb: 2 }}>
-        <RecipeList recipes={recipes} />
-      </Box>
-
+      {/* Resumen del pago y botones */}
       <Divider sx={{ mb: 2 }} />
 
       {/* Payment summary section */}
@@ -72,15 +96,15 @@ const Cart: React.FC = () => {
       {/* Display flex for payment summary */}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
         <Typography>Subtotal:</Typography>
-        <Typography>$10.00</Typography>
+        <Typography>{totalPrice}</Typography>
       </Box>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
         <Typography>Descuento aplicable:</Typography>
-        <Typography>-$2.00</Typography>
+        <Typography>0€</Typography>
       </Box>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
         <Typography>Cargo por envío:</Typography>
-        <Typography>$3.00</Typography>
+        <Typography>0€ (Recogida)</Typography>
       </Box>
 
       <Divider sx={{ mb: 2 }} />
@@ -88,7 +112,7 @@ const Cart: React.FC = () => {
       {/* Total section */}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 4 }}>
         <Typography variant="h6">Total:</Typography>
-        <Typography variant="h6">$11.00</Typography>
+        <Typography variant="h6">{totalPrice}</Typography>
       </Box>
 
       {/* Buttons */}
@@ -96,7 +120,12 @@ const Cart: React.FC = () => {
         <Button variant="outlined" color="secondary" sx={{ width: '48%' }} onClick={() => navigate('/some-path')}>
           Añadir más
         </Button>
-        <Button variant="contained" color="primary" sx={{ width: '48%' }} onClick={() => navigate('/payment')}>
+        <Button
+          variant="contained"
+          color="primary"
+          sx={{ width: '48%' }}
+          onClick={handlePayment}
+        >
           Pagar
         </Button>
       </Box>

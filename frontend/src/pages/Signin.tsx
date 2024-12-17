@@ -1,17 +1,18 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { useAppContext } from "../utils/AppContext";
 import {
   Box,
   Button,
   TextField,
   Typography,
-  IconButton,
   MenuItem,
   Alert,
 } from '@mui/material';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+
+// Components
+import { useAppContext } from "../utils/AppContext";
+import BackButton from '../components/BackButton';
 
 const Registration: React.FC = () => {
   const { backendUrl, setUserId } = useAppContext();
@@ -57,13 +58,7 @@ const Registration: React.FC = () => {
         px: 2,
       }}
     >
-      <IconButton onClick={() => navigate('/start')} sx={{ alignSelf: 'start', mb: 2 }}>
-        <ArrowBackIcon />
-      </IconButton>
-
-      <Typography variant="h4" component="h1" sx={{ mb: 3 }}>
-        Sign Up
-      </Typography>
+      <BackButton to="/start" title="Sign Up"/>
 
       {error && (
         <Alert severity="error" sx={{ mb: 2 }}>

@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import {
   Box,
   Typography,
@@ -11,9 +12,24 @@ import {
   ListItem,
   ListItemText,
   Rating,
+  TextField,
 } from '@mui/material';
 
-const RecipeDetails = ({ recipe }) => {
+
+const RecipeDetails = ({
+  recipe,
+  isParticipant,
+  onJoinRecipe,
+  onRemoveRecipe,
+  comments,
+  averageRating,
+  userComment,
+  userRating,
+  setUserComment,
+  setUserRating,
+  onSubmitComment,
+}) => {
+
   return (
     <Box sx={{ maxWidth: 600, mx: 'auto', my: 4, p: 2 }}>
       {/* Recipe Image */}
@@ -35,24 +51,29 @@ const RecipeDetails = ({ recipe }) => {
           <Typography variant="h4" gutterBottom>
             {recipe.name}
           </Typography>
+          <Link to={`/cook/${recipe.chefId._id}`}>
+            {recipe.chefId.name}
+          </Link>
           <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
             <Rating
               name="recipe-rating"
-              value={recipe.averageRating || 0}
+              value={averageRating || 0}
               readOnly
               precision={0.5}
             />
             <Typography variant="body2" sx={{ ml: 1 }}>
-              {recipe.averageRating?.toFixed(1) || "No rating"} ({recipe.totalRatings || 0})
+              {averageRating?.toFixed(1) || 'No rating'} ({comments?.length || 0})
             </Typography>
           </Box>
+
+          <Divider sx={{ my: 2 }} />
 
           {/* Description */}
           <Typography variant="h6" gutterBottom>
             Description
           </Typography>
           <Typography variant="body1" paragraph>
-            {recipe.description || "No description available."}
+            {recipe.description || 'No description available.'}
           </Typography>
 
           <Divider sx={{ my: 2 }} />
@@ -77,37 +98,63 @@ const RecipeDetails = ({ recipe }) => {
 
           <Divider sx={{ my: 2 }} />
 
-          {/* Comments */}
+          {/* Join Recipe Button */}
+          {isParticipant ? (
+            <Button variant="outlined" color="secondary" fullWidth onClick={onRemoveRecipe}>
+              Remove from Recipe
+            </Button>
+          ) : (
+            <Button variant="contained" color="primary" fullWidth onClick={onJoinRecipe}>
+              Join Recipe
+            </Button>
+          )}
+
+          <Divider sx={{ my: 2 }} />
+
+          {/* Comments Section */}
           <Typography variant="h6" gutterBottom>
             Comments
           </Typography>
           <List>
-            {recipe.comments?.length > 0 ? (
-              recipe.comments.map((comment, index) => (
-                <ListItem key={index} alignItems="flex-start">
+            {comments?.length > 0 ? (
+              comments.map((comment, index) => (
+                <ListItem key={index}>
                   <ListItemText
-                    primary={comment.text}
-                    secondary={`- ${comment.userId?.name || "Anonymous"}`}
+                    primary={comment.comment || 'No comment'}
+                    secondary={`- ${comment.userId.name} ${comment.rating}/5`}
                   />
                 </ListItem>
               ))
             ) : (
-              <Typography variant="body2" color="text.secondary">
-                No comments yet.
-              </Typography>
+              <Typography>No comments yet. Be the first to comment!</Typography>
             )}
           </List>
 
           <Divider sx={{ my: 2 }} />
 
-          {/* Join Recipe Button */}
-          <Button
-            variant="contained"
-            color="primary"
+          {/* Add/Edit Comment */}
+          <Typography variant="h6" gutterBottom>
+            Your Comment and Rating
+          </Typography>
+          <TextField
             fullWidth
-            onClick={() => alert("Join Recipe functionality coming soon!")}
-          >
-            Join Recipe
+            multiline
+            rows={2}
+            placeholder="Leave a comment..."
+            value={userComment}
+            onChange={(e) => setUserComment(e.target.value)}
+            sx={{ mb: 2 }}
+          />
+          <TextField
+            fullWidth
+            type="number"
+            label="Rating (1-5)"
+            value={userRating}
+            onChange={(e) => setUserRating(Number(e.target.value))}
+            inputProps={{ min: 1, max: 5 }}
+          />
+          <Button variant="contained" color="primary" sx={{ mt: 2 }} onClick={onSubmitComment}>
+            Submit
           </Button>
         </CardContent>
       </Card>

@@ -1,5 +1,6 @@
 import React from 'react';
-import { Box, Typography, Avatar, List, ListItem, ListItemIcon, ListItemText, Paper } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import { Box, Typography, Avatar, List, ListItem, ListItemIcon, ListItemText, Paper, Switch } from '@mui/material';
 import {
   AccountCircle,
   Language,
@@ -14,33 +15,40 @@ import {
 // Components
 import Navbar from '../components/Navigation';
 
-const sections = [
-  {
-    title: 'Meu perfil',
-    items: [
-      { icon: <AccountCircle />, text: 'Información persoal' },
-      { icon: <Language />, text: 'Idioma' },
-      { icon: <Article />, text: 'Política de privacidade' },
-      { icon: <Settings />, text: 'Axustes' },
-    ],
-  },
-  {
-    title: 'Notificacións',
-    items: [
-      { icon: <Notifications />, text: 'Notificacións push' },
-      { icon: <Campaign />, text: 'Notificacións promocionais' },
-    ],
-  },
-  {
-    title: 'Máis',
-    items: [
-      { icon: <Help />, text: 'Centro de axuda' },
-      { icon: <ExitToApp />, text: 'Pechar sesión' },
-    ],
-  },
-];
-
 const Account: React.FC = () => {
+  const navigate = useNavigate();
+  
+  const sections = [
+    {
+      title: 'Meu perfil',
+      items: [
+        { icon: <AccountCircle />, text: 'Información persoal' },
+        { icon: <Language />, text: 'Idioma', currentLanguage: 'Galego' },
+        { icon: <Article />, text: 'Política de privacidade' },
+        { icon: <Settings />, text: 'Axustes' },
+      ],
+    },
+    {
+      title: 'Notificacións',
+      items: [
+        { icon: <Notifications />, text: 'Notificacións push', hasSwitch: true },
+        { icon: <Campaign />, text: 'Notificacións promocionais', hasSwitch: true },
+      ],
+    },
+    {
+      title: 'Máis',
+      items: [
+        { icon: <Help />, text: 'Centro de axuda' },
+        { icon: <ExitToApp />, text: 'Pechar sesión', resolve: handleLogout },
+      ],
+    },
+  ];
+  
+  function handleLogout () {
+      localStorage.setItem('userRole', '');
+      navigate('/login');
+  }
+
   return (
     <>
       <Box sx={{
@@ -99,22 +107,34 @@ const Account: React.FC = () => {
 
         {/* Dynamic sections */}
         <Box sx={{ padding: '16px', maxWidth: '500px', margin: 'auto' }}>
-        <Paper sx={{ padding: 2, marginBottom: 2, boxShadow: 2 }}>
-          {sections.map((section, index) => (
-            <section key={index}>
-              <Typography variant="subtitle1" sx={{ fontWeight: 'bold', marginBottom: 1 }}>
-                {section.title}
-              </Typography>
-              <List>
-                {section.items.map((item, idx) => (
-                  <ListItem key={idx}>
-                    <ListItemIcon>{item.icon}</ListItemIcon>
-                    <ListItemText primary={item.text} />
-                  </ListItem>
-                ))}
-              </List>
-            </section>
-          ))}
+          <Paper sx={{ padding: 2, marginBottom: 2, boxShadow: 2 }}>
+            {sections.map((section, index) => (
+              <section key={index}>
+                <Typography variant="subtitle1" sx={{ fontWeight: 'bold', marginBottom: 1 }}>
+                  {section.title}
+                </Typography>
+                <List>
+                  {section.items.map((item, idx) => (
+                    <ListItem 
+                      key={idx} 
+                      sx={{cursor: "pointer"}}
+                      onClick={item.resolve ? item.resolve : undefined}
+                      secondaryAction={
+                      item.hasSwitch ? (
+                        <Switch
+                          edge="end"
+                          onChange={(e) => handleSwitchChange(item.text, e.target.checked)}
+                        />
+                      ) : null
+                    }>
+                      <ListItemIcon>{item.icon}</ListItemIcon>
+                      <ListItemText primary={item.text}/>
+                      <ListItemText className="text-end" secondary={item.currentLanguage}/>
+                    </ListItem>
+                  ))}
+                </List>
+              </section>
+            ))}
           </Paper>
         </Box>
       </Box>

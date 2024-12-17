@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { Recipe } from '../../types/Recipe';
 import { useAppContext } from '../../utils/AppContext';
 import Card from '@mui/material/Card';
@@ -27,18 +27,21 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ recipe }) => {
   };
 
   return (
-    <Card 
+    <Card
       sx={{ maxWidth: 345 }}
+      className='col-4 mx-2 my-3'
       onClick={handleClick}
       style={{ cursor: 'pointer' }}
     >
       <CardMedia
-        sx={{ height: 140 }}
+        sx={{ height: 176 }}
         image={recipe.image}
       />
       <CardContent>
         <section className="d-flex justify-content-between">
-          <p>{recipe.chefId?.name}</p>
+          <Link to={`/cook/${recipe.chefId?._id}`}>
+            {recipe.chefId?.name}
+          </Link>
           <p>rating</p>
         </section>
         <Typography gutterBottom variant="h5" component="div">

@@ -1,18 +1,39 @@
-import React from 'react';
-import { Card, CardContent, Typography, Box, Avatar, Button, Divider } from '@mui/material';
+import React, { useState } from 'react';
+import { Card, CardContent, Typography, Box, Avatar, Button, Divider, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import { shadows } from '@mui/system';
+import { Link } from 'react-router-dom';
 
 interface OrderCardProps {
   name: string;
   price: number;
   dishes: number;
-  orderId: number;
+  orderId: string;
   arrivalTime: string;
   status: string;
+  cancelOrder: (orderId: string) => void;
 }
 
-const OrderCard: React.FC<OrderCardProps> = ({ name, price, dishes, orderId, arrivalTime, status }) => {
+const OrderCard: React.FC<OrderCardProps> = ({ name, price, dishes, orderId, arrivalTime, status, cancelOrder }) => {
+  const [open, setOpen] = useState(false);
+  const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null); // Stores the selected orderId for cancellation
+
+  const handleCancelClick = (orderId: string) => {
+    setSelectedOrderId(orderId);
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+    setSelectedOrderId(null);
+  };
+
+  const handleConfirmCancel = () => {
+    if (selectedOrderId) {
+      cancelOrder(selectedOrderId); 
+      setOpen(false);
+    }
+  };
+
   return (
     <Card
       sx={{
@@ -61,15 +82,46 @@ const OrderCard: React.FC<OrderCardProps> = ({ name, price, dishes, orderId, arr
         </Box>
 
         {/* Botones */}
-        <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-          <Button variant="outlined" color="secondary" sx={{ borderRadius: '20px', px: 3 }}>
+        {status !== 'cancelled' && status !== 'complete' && (
+          <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+            <Button
+              variant="outlined"
+              color="secondary"
+              sx={{ borderRadius: '20px', px: 3 }}
+              onClick={() => handleCancelClick(orderId)} // Trigger confirmation dialog
+            >
+              Cancelar
+            </Button>
+            {/* Agrega el Link aquí */}
+            <Link to={`/order/${orderId}`} style={{ textDecoration: 'none' }}>
+              <Button
+                variant="contained"
+                color="primary"
+                sx={{ borderRadius: '20px', px: 3 }}
+              >
+                Seguir pedido
+              </Button>
+            </Link>
+          </Box>
+        )}
+
+      </CardContent>
+
+      {/* Dialog de confirmación */}
+      <Dialog open={open} onClose={handleClose}>
+        <DialogTitle>Confirmar cancelación</DialogTitle>
+        <DialogContent>
+          <Typography>¿Estás seguro de que deseas cancelar este pedido?</Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose} color="primary">
             Cancelar
           </Button>
-          <Button variant="contained" color="primary" sx={{ borderRadius: '20px', px: 3 }}>
-            Seguir pedido
+          <Button onClick={handleConfirmCancel} color="secondary">
+            Confirmar
           </Button>
-        </Box>
-      </CardContent>
+        </DialogActions>
+      </Dialog>
     </Card>
   );
 };

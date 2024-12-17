@@ -15,6 +15,8 @@ const RecipeSchema = new mongoose.Schema({
   ingredients: [{ type: String, required: true }],
   creationDate: { type: Date, default: Date.now },
   deliveryDate: { type: Date, required: true },
+  price: { type: Number, required: true },
+  type: { type: String },
   unitsAvailable: { type: Number, required: true },
   slots: { type: Number, required: true },
   status: {
